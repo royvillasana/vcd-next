@@ -9,6 +9,8 @@ export interface CourseModule {
   phase: string;
   phaseId: string;
   overview: string;
+  /** Optional/supplementary content (vs. the required core path). */
+  optional?: boolean;
 }
 
 export interface Phase {
@@ -19,6 +21,8 @@ export interface Phase {
   color: string;
   accentColor: string;
   borderColor: string;
+  bgHex: string;
+  textHex: string;
   modules: CourseModule[];
 }
 
@@ -31,7 +35,20 @@ export const phases: Phase[] = [
     color: "bg-stone-50",
     accentColor: "text-stone-600",
     borderColor: "border-stone-200",
+    bgHex: "#F0E5D3",
+    textHex: "#191510",
     modules: [
+      {
+        id: "monboard",
+        slug: "module-onboarding",
+        num: "Pre",
+        title: "Setup & Environment",
+        duration: "1–2 hrs",
+        phase: "Phase 0",
+        phaseId: "phase0",
+        overview: "New to engineering tools? Start here: what the Terminal is, how to open it on Mac and Windows, first-time setup, and troubleshooting.",
+        optional: true,
+      },
       {
         id: "m00",
         slug: "module-00",
@@ -52,6 +69,8 @@ export const phases: Phase[] = [
     color: "bg-slate-50",
     accentColor: "text-slate-700",
     borderColor: "border-slate-200",
+    bgHex: "#DBEAFE",
+    textHex: "#191510",
     modules: [
       {
         id: "m01",
@@ -113,6 +132,8 @@ export const phases: Phase[] = [
     color: "bg-violet-50",
     accentColor: "text-violet-700",
     borderColor: "border-violet-200",
+    bgHex: "#B9A5FF",
+    textHex: "#191510",
     modules: [
       {
         id: "m06",
@@ -134,6 +155,8 @@ export const phases: Phase[] = [
     color: "bg-emerald-50",
     accentColor: "text-emerald-700",
     borderColor: "border-emerald-200",
+    bgHex: "#6FE3A5",
+    textHex: "#191510",
     modules: [
       {
         id: "m07",
@@ -175,6 +198,8 @@ export const phases: Phase[] = [
     color: "bg-amber-50",
     accentColor: "text-amber-700",
     borderColor: "border-amber-200",
+    bgHex: "#FFC933",
+    textHex: "#191510",
     modules: [
       {
         id: "m10",

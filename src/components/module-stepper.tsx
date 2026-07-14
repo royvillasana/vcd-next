@@ -1,58 +1,14 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { phases, capstoneModule } from "@/lib/course-data";
-
-const phaseConfig: Record<
-  string,
-  { label: string; inactive: string; active: string; done: string; connector: string; ring: string }
-> = {
-  phase0: {
-    label: "Foundation",
-    inactive: "bg-stone-100 border-stone-400 text-stone-600 hover:bg-stone-200 hover:border-stone-500",
-    active:   "bg-stone-700 border-stone-700 text-white shadow-md",
-    done:     "bg-stone-200 border-stone-300 text-stone-500",
-    connector: "bg-stone-300",
-    ring:     "ring-stone-400",
-  },
-  phase1: {
-    label: "Read the Stack",
-    inactive: "bg-slate-100 border-slate-400 text-slate-600 hover:bg-slate-200 hover:border-slate-500",
-    active:   "bg-slate-700 border-slate-700 text-white shadow-md",
-    done:     "bg-slate-200 border-slate-300 text-slate-500",
-    connector: "bg-slate-300",
-    ring:     "ring-slate-400",
-  },
-  phase2: {
-    label: "Write Specs",
-    inactive: "bg-violet-50 border-violet-400 text-violet-600 hover:bg-violet-100 hover:border-violet-600",
-    active:   "bg-violet-600 border-violet-600 text-white shadow-md",
-    done:     "bg-violet-100 border-violet-300 text-violet-500",
-    connector: "bg-violet-300",
-    ring:     "ring-violet-400",
-  },
-  phase3: {
-    label: "Build with AI",
-    inactive: "bg-emerald-50 border-emerald-500 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-600",
-    active:   "bg-emerald-600 border-emerald-600 text-white shadow-md",
-    done:     "bg-emerald-100 border-emerald-300 text-emerald-600",
-    connector: "bg-emerald-300",
-    ring:     "ring-emerald-400",
-  },
-  phase4: {
-    label: "Ship It",
-    inactive: "bg-amber-50 border-amber-400 text-amber-700 hover:bg-amber-100 hover:border-amber-500",
-    active:   "bg-amber-500 border-amber-500 text-white shadow-md",
-    done:     "bg-amber-100 border-amber-300 text-amber-600",
-    connector: "bg-amber-300",
-    ring:     "ring-amber-400",
-  },
-};
+import { phases, capstoneModule, allModules } from "@/lib/course-data";
+import { useReviewMode } from "@/lib/use-review-mode";
 
 interface Props {
   currentSlug: string;
@@ -60,11 +16,11 @@ interface Props {
 
 function CheckIcon() {
   return (
-    <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
       <path
-        d="M1.5 4l1.5 1.5 3.5-3.5"
+        d="M3 7.5l2.5 2.5 5.5-5.5"
         stroke="currentColor"
-        strokeWidth="1.5"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -72,150 +28,191 @@ function CheckIcon() {
   );
 }
 
+function LockIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+      <rect x="2.5" y="6.5" width="9" height="6" rx="1.2" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M4.5 6.5V4.8a2.5 2.5 0 0 1 5 0V6.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function ModuleStepper({ currentSlug }: Props) {
-  const allSlugs = [
-    ...phases.flatMap((p) => p.modules.map((m) => m.slug)),
-    capstoneModule.slug,
-  ];
+  const review = useReviewMode();
+  const allSlugs = allModules.map((m) => m.slug);
   const currentIndex = allSlugs.indexOf(currentSlug);
 
+  // Which modules the learner has completed (localStorage, kept live)
+  const [completed, setCompleted] = useState<Set<string>>(new Set());
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    const read = () => {
+      const done = new Set<string>();
+      for (const slug of allSlugs) {
+        try {
+          if (localStorage.getItem(`vcd-complete-${slug}`) === "1") done.add(slug);
+        } catch {
+          // ignore
+        }
+      }
+      setCompleted(done);
+      setHydrated(true);
+    };
+    read();
+    window.addEventListener("vcd-progress", read);
+    window.addEventListener("storage", read);
+    return () => {
+      window.removeEventListener("vcd-progress", read);
+      window.removeEventListener("storage", read);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // A module is reachable if it's at or before the current one, already
+  // completed, or its immediate predecessor is completed (sequential unlock).
+  const isUnlocked = (nodeIndex: number, slug: string) => {
+    if (review) return true;
+    if (nodeIndex <= currentIndex) return true;
+    if (!hydrated) return false;
+    if (completed.has(slug)) return true;
+    const prev = allSlugs[nodeIndex - 1];
+    return prev ? completed.has(prev) : false;
+  };
+
+  // Build a flat list of nodes with phase info
+  const nodes: {
+    slug: string;
+    num: string;
+    title: string;
+    duration: string;
+    phase: string;
+    bgHex: string;
+    isCapstone: boolean;
+  }[] = [];
+
+  for (const phase of phases) {
+    for (const mod of phase.modules) {
+      nodes.push({
+        slug: mod.slug,
+        num: mod.num,
+        title: mod.title,
+        duration: mod.duration,
+        phase: phase.name,
+        bgHex: phase.bgHex,
+        isCapstone: false,
+      });
+    }
+  }
+
+  nodes.push({
+    slug: capstoneModule.slug,
+    num: capstoneModule.num,
+    title: capstoneModule.title,
+    duration: capstoneModule.duration,
+    phase: "Capstone",
+    bgHex: "#FFC933",
+    isCapstone: true,
+  });
+
   return (
-    /* px-1 py-1 give the rings room so they aren't clipped by overflow-x-auto */
-    <div className="mb-6 overflow-x-auto">
-      <div className="flex items-start gap-0 min-w-max px-1 py-1">
-        {phases.map((phase, phaseIdx) => {
-          const cfg = phaseConfig[phase.id];
-          const isPhaseActive = phase.modules.some((m) => m.slug === currentSlug);
+    <div className="border-b-[3px] border-[#191510] bg-white overflow-x-auto">
+      <div className="max-w-[1240px] mx-auto px-7 py-[18px] pb-11 flex items-center gap-2 min-w-max">
+        {nodes.map((node, i) => {
+          const nodeIndex = allSlugs.indexOf(node.slug);
+          const isCurrent = node.slug === currentSlug;
+          const unlocked = isUnlocked(nodeIndex, node.slug);
+          const isDone = nodeIndex < currentIndex;
+          const locked = !unlocked && !isCurrent;
+          const isFuture = !isDone && !isCurrent;
+
+          // Node styles
+          let nodeClasses =
+            "rounded-full border-[3px] border-[#191510] flex items-center justify-center font-mono font-bold no-underline transition-transform duration-[120ms] relative";
+
+          if (locked) {
+            nodeClasses +=
+              " bg-white text-[#191510]/35 w-9 h-9 text-xs opacity-60 cursor-not-allowed";
+          } else if (isDone) {
+            nodeClasses += " bg-[#1FA45B] text-white w-9 h-9 text-xs hover:scale-110";
+          } else if (isCurrent) {
+            nodeClasses +=
+              " bg-[var(--brand)] text-white w-11 h-11 text-sm animate-[vcd-pulse-ring_2s_infinite] hover:scale-110";
+          } else {
+            nodeClasses += " text-[#191510] w-9 h-9 text-xs opacity-70 hover:scale-110";
+          }
+
+          // Connector dash (after each node except the last)
+          const showConnector = i < nodes.length - 1;
+          const connectorDone = isDone;
+
+          const nodeInner = (
+            <>
+              {locked ? (
+                <LockIcon />
+              ) : isDone ? (
+                <CheckIcon />
+              ) : node.isCapstone ? (
+                "★"
+              ) : (
+                node.num
+              )}
+
+              {/* "you are here" label for current */}
+              {isCurrent && (
+                <span className="absolute top-full mt-1.5 left-1/2 -translate-x-1/2 font-[family-name:var(--font-caveat)] text-[var(--brand)] font-bold text-[18px] -rotate-2 whitespace-nowrap pointer-events-none select-none">
+                  &uarr; you are here!
+                </span>
+              )}
+            </>
+          );
 
           return (
-            <div key={phase.id} className="flex items-start">
-              <div className="flex flex-col items-start gap-1.5">
-                {/* Phase label */}
-                <div
-                  className={`px-1 text-[9px] font-mono uppercase tracking-widest whitespace-nowrap transition-colors ${
-                    isPhaseActive
-                      ? "text-foreground font-bold"
-                      : "text-muted-foreground/60"
-                  }`}
-                >
-                  {cfg.label}
-                </div>
-
-                {/* Module steps */}
-                <div className="flex items-center gap-1">
-                  {phase.modules.map((mod, modIdx) => {
-                    const modIndex = allSlugs.indexOf(mod.slug);
-                    const isActive = mod.slug === currentSlug;
-                    const isDone = modIndex < currentIndex;
-
-                    const stepClass = isActive
-                      ? `${cfg.active} ring-2 ${cfg.ring} ring-offset-2 ring-offset-background`
-                      : isDone
-                      ? cfg.done
-                      : cfg.inactive;
-
-                    return (
-                      <div key={mod.id} className="flex items-center gap-1">
-                        <Tooltip>
-                          <TooltipTrigger
-                            render={
-                              <Link
-                                href={`/modules/${mod.slug}`}
-                                className={`w-7 h-7 rounded-full border-2 flex items-center justify-center font-mono text-[9px] font-bold transition-all duration-150 ${stepClass}`}
-                                aria-current={isActive ? "step" : undefined}
-                              >
-                                {isDone ? <CheckIcon /> : mod.num}
-                              </Link>
-                            }
-                          />
-                          <TooltipContent side="bottom">
-                            <div className="font-medium">{mod.title}</div>
-                            <div className="text-muted-foreground mt-0.5 text-[10px]">
-                              {mod.duration} · {mod.phase}
-                            </div>
-                          </TooltipContent>
-                        </Tooltip>
-
-                        {modIdx < phase.modules.length - 1 && (
-                          <div
-                            className={`w-3 h-0.5 flex-shrink-0 rounded-full ${
-                              isDone ? cfg.connector : "bg-border"
-                            }`}
-                          />
-                        )}
+            <div key={node.slug} className="flex items-center gap-2">
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    locked ? (
+                      <div
+                        className={nodeClasses}
+                        aria-disabled="true"
+                        style={isFuture ? { backgroundColor: node.bgHex } : undefined}
+                      >
+                        {nodeInner}
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Connector between phases */}
-              {phaseIdx < phases.length - 1 && (
-                <div className="flex flex-col items-start gap-1.5 mx-1.5">
-                  <div className="h-[14px]" />
-                  <div className="flex items-center h-7">
-                    <div className="w-4 h-0.5 bg-border/50 rounded-full flex-shrink-0" />
+                    ) : (
+                      <Link
+                        href={`/modules/${node.slug}`}
+                        className={nodeClasses}
+                        style={
+                          isFuture ? { backgroundColor: node.bgHex } : undefined
+                        }
+                      >
+                        {nodeInner}
+                      </Link>
+                    )
+                  }
+                />
+                <TooltipContent side="bottom">
+                  <div className="font-medium">{node.title}</div>
+                  <div className="text-muted-foreground mt-0.5 text-[10px]">
+                    {locked
+                      ? "🔒 Finish the previous module to unlock"
+                      : `${node.duration} · ${node.phase}`}
                   </div>
-                </div>
+                </TooltipContent>
+              </Tooltip>
+
+              {showConnector && (
+                <div
+                  className={`w-5 h-[3px] rounded-full flex-shrink-0 ${
+                    connectorDone ? "bg-[#191510]" : "bg-[#191510]/20"
+                  }`}
+                />
               )}
             </div>
           );
         })}
-
-        {/* Capstone */}
-        <div className="flex items-start">
-          <div className="flex flex-col items-start gap-1.5 mx-1.5">
-            <div className="h-[14px]" />
-            <div className="flex items-center h-7">
-              <div className="w-4 h-0.5 bg-border/50 rounded-full flex-shrink-0" />
-            </div>
-          </div>
-
-          <div className="flex flex-col items-start gap-1.5">
-            <div
-              className={`px-1 text-[9px] font-mono uppercase tracking-widest whitespace-nowrap transition-colors ${
-                currentSlug === capstoneModule.slug
-                  ? "text-[var(--brand)] font-bold"
-                  : "text-muted-foreground/60"
-              }`}
-            >
-              Capstone
-            </div>
-
-            {(() => {
-              const capstoneIndex = allSlugs.indexOf(capstoneModule.slug);
-              const isActive = currentSlug === capstoneModule.slug;
-              const isDone = capstoneIndex < currentIndex;
-              const capstoneClass = isActive
-                ? "bg-[var(--brand)] border-[var(--brand)] text-white ring-2 ring-[var(--brand)]/50 ring-offset-2 ring-offset-background shadow-md"
-                : isDone
-                ? "bg-[var(--brand)]/10 border-[var(--brand)]/30 text-[var(--brand)]/60"
-                : "bg-[var(--brand)]/5 border-[var(--brand)]/50 text-[var(--brand)] hover:bg-[var(--brand)]/10 hover:border-[var(--brand)]";
-
-              return (
-                <Tooltip>
-                  <TooltipTrigger
-                    render={
-                      <Link
-                        href={`/modules/${capstoneModule.slug}`}
-                        className={`w-7 h-7 rounded-full border-2 flex items-center justify-center text-[11px] transition-all duration-150 ${capstoneClass}`}
-                        aria-current={isActive ? "step" : undefined}
-                      >
-                        {isDone ? <CheckIcon /> : "★"}
-                      </Link>
-                    }
-                  />
-                  <TooltipContent side="bottom">
-                    <div className="font-medium">{capstoneModule.title}</div>
-                    <div className="text-muted-foreground mt-0.5 text-[10px]">
-                      {capstoneModule.duration}
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              );
-            })()}
-          </div>
-        </div>
       </div>
     </div>
   );

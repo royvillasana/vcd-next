@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 interface Section {
   heading: string;
   id: string;
-  subs?: { label: string; id: string }[];
+  subs?: { label: string; id: string; num?: string }[];
 }
 
 interface Props {
@@ -14,10 +14,27 @@ interface Props {
   accentDot: string;
 }
 
-export function ModuleSidebar({ sections, slug, accentDot }: Props) {
+function getCheer(visitedCount: number, totalCount: number): string {
+  if (totalCount > 0 && visitedCount >= totalCount) return "complete! 🎉";
+  if (visitedCount >= 3) return "on fire! 🔥";
+  if (visitedCount >= 1) return "nice start! ✨";
+  return "let's go! 🚀";
+}
+
+export function ModuleSidebar({ sections, slug }: Props) {
   const [activeId, setActiveId] = useState<string>("");
   const [visited, setVisited] = useState<Set<string>>(new Set());
   const observerRef = useRef<IntersectionObserver | null>(null);
+
+  // Total number of trackable sections (top-level only for progress)
+  const totalSections = sections.length;
+  const visitedTopLevel = sections.filter(
+    (s) => visited.has(s.id)
+  ).length;
+  const progressPct =
+    totalSections > 0
+      ? Math.round((visitedTopLevel / totalSections) * 100)
+      : 0;
 
   // Load visited from localStorage
   useEffect(() => {
@@ -87,109 +104,150 @@ export function ModuleSidebar({ sections, slug, accentDot }: Props) {
 
   return (
     <aside className="hidden lg:block">
-      <div className="sticky top-20">
-        <div className="text-xs font-mono text-muted-foreground uppercase tracking-widest px-2 mb-4">
-          On This Page
-        </div>
-        <nav className="space-y-0.5">
-          {sections.map((section) => (
-            <div key={section.id}>
-              <a
-                href={`#${section.id}`}
-                className={`flex items-center gap-2 px-2 py-2 rounded-md text-sm transition-colors group ${
-                  isActive(section.id)
-                    ? "text-foreground bg-muted font-medium"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
-                }`}
-              >
-                {/* Status indicator */}
-                <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center">
-                  {isVisited(section.id) ? (
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 12 12"
-                      fill="none"
-                      className="text-muted-foreground/60"
-                    >
-                      <path
-                        d="M2 6l3 3 5-5"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  ) : isActive(section.id) ? (
-                    <div
-                      className={`w-1.5 h-1.5 rounded-full ${accentDot}`}
-                    />
-                  ) : (
-                    <div className="w-1.5 h-1.5 rounded-full bg-border" />
-                  )}
-                </span>
-                <span className="truncate">{section.heading}</span>
-              </a>
-
-              {section.subs && section.subs.length > 0 && (
-                <div className="pl-6 space-y-0.5 mt-0.5">
-                  {section.subs.map((sub) => (
-                    <a
-                      key={sub.id}
-                      href={`#${sub.id}`}
-                      className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-xs transition-colors ${
-                        isActive(sub.id)
-                          ? "text-foreground bg-muted font-medium"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
-                      }`}
-                    >
-                      <span className="flex-shrink-0 w-3 h-3 flex items-center justify-center">
-                        {isVisited(sub.id) ? (
-                          <svg
-                            width="10"
-                            height="10"
-                            viewBox="0 0 10 10"
-                            fill="none"
-                            className="text-muted-foreground/50"
-                          >
-                            <path
-                              d="M1.5 5l2.5 2.5 4.5-4.5"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        ) : (
-                          <div className="w-1 h-1 rounded-full bg-border/60" />
-                        )}
-                      </span>
-                      <span className="truncate">{sub.label}</span>
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </nav>
-
-        {/* Progress indicator */}
-        <div className="mt-6 px-2">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs text-muted-foreground font-mono">Progress</span>
-            <span className="text-xs text-muted-foreground font-mono tabular-nums">
-              {visited.size}/{sections.length}
+      <div className="sticky top-24">
+        {/* ── Progress card ── */}
+        <div className="border-[3px] border-[#191510] rounded-[20px] bg-white p-5 shadow-[5px_5px_0_#191510] mb-5">
+          <div className="flex justify-between items-center mb-2.5">
+            <span className="font-extrabold text-sm">Module progress</span>
+            <span className="font-mono text-xs font-bold">
+              {progressPct}%
             </span>
           </div>
-          <div className="h-1 rounded-full bg-border overflow-hidden">
+
+          {/* Progress bar */}
+          <div className="h-3.5 border-[2px] border-[#191510] rounded-full overflow-hidden bg-[#FAF3E7]">
             <div
-              className="h-full rounded-full bg-foreground transition-all duration-500"
+              className="h-full rounded-full"
               style={{
-                width: `${sections.length > 0 ? (visited.size / sections.length) * 100 : 0}%`,
+                width: `${progressPct}%`,
+                background:
+                  "repeating-linear-gradient(-45deg, #1FA45B 0 8px, #23B968 8px 16px)",
+                transition:
+                  "width 500ms cubic-bezier(0.34, 1.56, 0.64, 1)",
               }}
             />
           </div>
+
+          {/* Cheer text */}
+          <p className="font-[family-name:var(--font-caveat)] text-[17px] font-bold text-[#7B5CFF] text-right mt-1.5">
+            {getCheer(visitedTopLevel, totalSections)}
+          </p>
         </div>
+
+        {/* ── TOC label ── */}
+        <div className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] opacity-55 px-1 mb-2.5">
+          On this page
+        </div>
+
+        {/* ── TOC items ── */}
+        <nav className="space-y-0.5">
+          {sections.map((section) => {
+            const active = isActive(section.id);
+            const done = isVisited(section.id);
+
+            return (
+              <div key={section.id}>
+                <a
+                  href={`#${section.id}`}
+                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border-[2px] transition-all text-sm ${
+                    active
+                      ? "border-[#191510] bg-[var(--accent-yellow)] font-bold"
+                      : done
+                        ? "border-transparent"
+                        : "border-transparent hover:border-[#191510]"
+                  }`}
+                >
+                  {/* Dot */}
+                  <span
+                    className={`flex-shrink-0 w-5 h-5 rounded-full border-[2px] border-[#191510] flex items-center justify-center ${
+                      done
+                        ? "bg-[#1FA45B]"
+                        : active
+                          ? "bg-[var(--accent-yellow)]"
+                          : "bg-transparent"
+                    }`}
+                  >
+                    {done && (
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 10 10"
+                        fill="none"
+                      >
+                        <path
+                          d="M2 5.5l2 2 4-4"
+                          stroke="white"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    )}
+                  </span>
+                  <span className="truncate">{section.heading}</span>
+                </a>
+
+                {/* Sub-items */}
+                {section.subs && section.subs.length > 0 && (
+                  <div className="pl-10 space-y-0.5 mt-0.5">
+                    {section.subs.map((sub) => {
+                      const subActive = isActive(sub.id);
+                      const subDone = isVisited(sub.id);
+
+                      return (
+                        <a
+                          key={sub.id}
+                          href={`#${sub.id}`}
+                          title={sub.num ? `${sub.num} — ${sub.label}` : sub.label}
+                          className={`flex items-center gap-2.5 px-3 py-2 rounded-xl border-[2px] transition-all text-[13px] ${
+                            subActive
+                              ? "border-[#191510] bg-[var(--accent-yellow)] font-bold"
+                              : subDone
+                                ? "border-transparent"
+                                : "border-transparent hover:border-[#191510]"
+                          }`}
+                        >
+                          <span
+                            className={`flex-shrink-0 w-5 h-5 rounded-full border-[2px] border-[#191510] flex items-center justify-center ${
+                              subDone
+                                ? "bg-[#1FA45B]"
+                                : subActive
+                                  ? "bg-[var(--accent-yellow)]"
+                                  : "bg-transparent"
+                            }`}
+                          >
+                            {subDone && (
+                              <svg
+                                width="10"
+                                height="10"
+                                viewBox="0 0 10 10"
+                                fill="none"
+                              >
+                                <path
+                                  d="M2 5.5l2 2 4-4"
+                                  stroke="white"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            )}
+                          </span>
+                          {sub.num && (
+                            <span className="flex-shrink-0 font-mono text-[11px] font-bold tabular-nums opacity-55">
+                              {sub.num}
+                            </span>
+                          )}
+                          <span className="truncate">{sub.label}</span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </nav>
       </div>
     </aside>
   );

@@ -3,22 +3,27 @@ import Link from "next/link";
 import { SiteNav } from "@/components/site-nav";
 import { ModuleSidebar } from "@/components/module-sidebar";
 import { ModuleStepper } from "@/components/module-stepper";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { allModules, capstoneModule } from "@/lib/course-data";
+import { CodeBlock } from "@/components/code-block";
+import { CardCompareTabs } from "@/components/card-compare-tabs";
+import { FigmaPanel } from "@/components/figma-panels";
+import { ModuleCompletion } from "@/components/module-completion";
+import { ModuleLockGate } from "@/components/module-lock-gate";
+import { TabGroupWrapper } from "@/components/tab-group-wrapper";
+import { allModules, capstoneModule, phases } from "@/lib/course-data";
 import { moduleContent } from "@/lib/module-content";
+import { CapstoneEval } from "@/components/capstone-eval";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-const phaseColors: Record<string, { dot: string; accent: string; bg: string; badge: string; border: string }> = {
-  phase0: { dot: "bg-stone-400", accent: "text-stone-600", bg: "bg-stone-50", badge: "border-stone-200 text-stone-700 bg-stone-50", border: "border-l-stone-400" },
-  phase1: { dot: "bg-slate-500", accent: "text-slate-700", bg: "bg-slate-50", badge: "border-slate-200 text-slate-700 bg-slate-50", border: "border-l-slate-500" },
-  phase2: { dot: "bg-violet-500", accent: "text-violet-700", bg: "bg-violet-50", badge: "border-violet-200 text-violet-700 bg-violet-50", border: "border-l-violet-500" },
-  phase3: { dot: "bg-emerald-500", accent: "text-emerald-700", bg: "bg-emerald-50", badge: "border-emerald-200 text-emerald-700 bg-emerald-50", border: "border-l-emerald-500" },
-  phase4: { dot: "bg-amber-500", accent: "text-amber-700", bg: "bg-amber-50", badge: "border-amber-200 text-amber-700 bg-amber-50", border: "border-l-amber-500" },
-  capstone: { dot: "bg-[var(--brand)]", accent: "text-[var(--brand)]", bg: "bg-[var(--brand)]/5", badge: "border-[var(--brand)]/30 text-[var(--brand)]", border: "border-l-[var(--brand)]" },
+const phaseStyles: Record<string, { bg: string; text: string }> = {
+  phase0: { bg: "#F0E5D3", text: "#191510" },
+  phase1: { bg: "#DBEAFE", text: "#191510" },
+  phase2: { bg: "#B9A5FF", text: "#191510" },
+  phase3: { bg: "#6FE3A5", text: "#191510" },
+  phase4: { bg: "#FFC933", text: "#191510" },
+  capstone: { bg: "#FF4D24", text: "#FAF3E7" },
 };
 
 export async function generateStaticParams() {
@@ -30,7 +35,7 @@ export default async function ModulePage({ params }: Props) {
   const mod = allModules.find((m) => m.slug === slug);
   if (!mod) notFound();
 
-  const colors = phaseColors[mod.phaseId] ?? phaseColors.phase0;
+  const pStyle = phaseStyles[mod.phaseId] ?? phaseStyles.phase0;
   const content = moduleContent[slug] ?? moduleContent["module-00"];
 
   const allList = allModules;
@@ -38,294 +43,688 @@ export default async function ModulePage({ params }: Props) {
   const prev = idx > 0 ? allList[idx - 1] : null;
   const next = idx < allList.length - 1 ? allList[idx + 1] : null;
 
+  const isCapstone = slug === capstoneModule.slug;
+
+  // ─── CAPSTONE: completely custom dark-themed page ───
+  if (isCapstone) {
+    const buildItems = [
+      { icon: "🦸", text: "Hero with a headline, subheadline, and primary CTA" },
+      { icon: "🎯", text: "'Who is this for' section with real content" },
+      { icon: "📚", text: "Full curriculum overview with all modules and deliverables" },
+      { icon: "🧱", text: "'What you will build' section showing key deliverables" },
+      { icon: "🎛️", text: "At least one interactive element: accordion, tab, animation, or modal" },
+      { icon: "♿", text: "Mobile-first responsive design, WCAG 2.1 AA accessible markup" },
+    ];
+    const workflow = [
+      { n: "1", title: "Design in Figma", detail: "Variables, components, and annotations — Dev Mode verified.", color: "#F0E5D3", numColor: "#191510" },
+      { n: "2", title: "Write the spec", detail: "Page spec, component specs, interaction specs for everything interactive.", color: "#2545D3", numColor: "#FAF3E7" },
+      { n: "3", title: "Export tokens", detail: "From Figma Variables to your token file.", color: "#7B5CFF", numColor: "#FAF3E7" },
+      { n: "4", title: "Set up the project", detail: "Repo, deployment pipeline, token file wired in.", color: "#1FA45B", numColor: "#FAF3E7" },
+      { n: "5", title: "Build each section", detail: "Hero, curriculum, deliverables, social proof, CTA, footer.", color: "#FF4D24", numColor: "#FAF3E7" },
+      { n: "6", title: "Connect the sections", detail: "Scroll interactions, responsive behaviour, navigation.", color: "#FFC933", numColor: "#191510" },
+      { n: "7", title: "Submit a PR", detail: "Screenshots, Figma link, and a full description.", color: "#2545D3", numColor: "#FAF3E7" },
+      { n: "8", title: "Deploy", detail: "Live URL, QA'd against your Figma design, ready to share.", color: "#1FA45B", numColor: "#FAF3E7" },
+    ];
+    const nextTopics = [
+      "Design systems at scale — multi-brand tokens",
+      "Spec-driven motion & animation",
+      "Accessibility auditing in depth",
+      "AI-assisted design-system maintenance",
+    ];
+
+    return (
+      <div className="min-h-screen flex flex-col bg-[#191510] text-[#FAF3E7]">
+        <ModuleLockGate slug={slug} />
+        {/* Dark nav variant */}
+        <header className="sticky top-0 z-50 w-full bg-[#191510] border-b-[3px] border-[#FFC933]">
+          <div className="max-w-[1240px] mx-auto px-7 h-[68px] flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="w-[38px] h-[38px] rounded-full bg-[#FFC933] border-[3px] border-[#FAF3E7] flex items-center justify-center">
+                <svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M3 4L7 10L11 4" stroke="#191510" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </div>
+              <span className="font-extrabold text-[17px] tracking-[-0.02em] text-[#FAF3E7]">
+                Design Engineering <span className="font-[family-name:var(--font-caveat)] text-[19px] font-bold text-[#FFC933]">for UX designers</span>
+              </span>
+            </Link>
+            <nav className="flex items-center gap-2.5">
+              <Link href="/" className="px-4 py-2 rounded-full text-[15px] font-semibold text-[#FAF3E7] border-[2px] border-transparent hover:border-[#FAF3E7] transition-colors">Home</Link>
+              <Link href="/curriculum" className="px-4 py-2 rounded-full text-[15px] font-semibold text-[#FAF3E7] border-[2px] border-transparent hover:border-[#FAF3E7] transition-colors">Syllabus</Link>
+              <Link href="/resources" className="px-4 py-2 rounded-full text-[15px] font-semibold text-[#FAF3E7] border-[2px] border-transparent hover:border-[#FAF3E7] transition-colors">Resources</Link>
+              <Link href="/glossary" className="px-4 py-2 rounded-full text-[15px] font-semibold text-[#FAF3E7] border-[2px] border-transparent hover:border-[#FAF3E7] transition-colors">Glossary</Link>
+            </nav>
+          </div>
+        </header>
+
+        <div className="flex-1 max-w-[1240px] mx-auto px-7 pt-16 pb-[88px] w-full">
+          {/* Hero */}
+          <div className="text-center mb-[72px] relative">
+            <div className="text-[80px] inline-block animate-[vcd-float_3s_ease-in-out_infinite] mb-2">⭐</div>
+            <div className="block mb-5">
+              <span className="inline-block font-mono text-xs font-bold tracking-[0.16em] uppercase bg-[var(--brand)] text-[#FAF3E7] border-[2px] border-[#FAF3E7] rounded-lg px-3.5 py-1.5 -rotate-[1.5deg]">
+                Final boss · 10–15 hrs · everything you&apos;ve learned
+              </span>
+            </div>
+            <h1 className="text-[clamp(64px,8vw,110px)] font-extrabold tracking-[-0.045em] leading-[0.95] mb-5">
+              The{" "}
+              <span className="bg-[#FFC933] text-[#191510] px-5 pb-1.5 rounded-[18px] border-[3px] border-[#FAF3E7] inline-block -rotate-2 shadow-[6px_6px_0_#FF4D24]">
+                Capstone
+              </span>
+            </h1>
+            <p className="text-[20px] leading-[1.6] max-w-[620px] mx-auto font-medium opacity-80">
+              Design and build a complete, polished landing page — from Figma to a live URL — entirely on your own.{" "}
+              <span className="font-[family-name:var(--font-caveat)] text-[26px] font-bold text-[#FFC933]">
+                this one goes in the portfolio
+              </span>
+            </p>
+          </div>
+
+          {/* What you'll build */}
+          <section className="mb-16">
+            <h2 className="text-[36px] font-extrabold tracking-[-0.03em] mb-6">
+              What you&apos;ll build<span className="text-[#FFC933]">.</span>
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {buildItems.map((b, i) => (
+                <div
+                  key={i}
+                  className="border-[2px] border-[#FAF3E7]/25 rounded-[18px] px-[22px] py-5 flex items-start gap-3.5 transition-all duration-[140ms] hover:border-[#FFC933] hover:-translate-y-1"
+                  style={{ background: "rgba(250,243,231,0.04)" }}
+                >
+                  <span className="text-[26px] flex-shrink-0">{b.icon}</span>
+                  <span className="text-[15px] font-semibold leading-[1.5]">{b.text}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* 8-step workflow */}
+          <section className="mb-16">
+            <div className="flex items-baseline gap-[18px] mb-6 flex-wrap">
+              <h2 className="text-[36px] font-extrabold tracking-[-0.03em]">
+                The full SDD workflow<span className="text-[var(--brand)]">.</span>
+              </h2>
+              <span className="font-[family-name:var(--font-caveat)] text-[24px] font-bold text-[#FFC933]">
+                unassisted — but you have all the templates
+              </span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+              {workflow.map((w) => (
+                <div
+                  key={w.n}
+                  className="flex items-start gap-4 border-[3px] border-[#FAF3E7] rounded-[18px] px-5 py-[18px] bg-[#191510] transition-all duration-[140ms] hover:bg-[#FAF3E7] hover:text-[#191510] group"
+                  style={{ ["--hover-shadow" as string]: `5px 5px 0 ${w.color}` }}
+                >
+                  <span
+                    className="w-10 h-10 rounded-full border-[2px] flex items-center justify-center font-mono text-[15px] font-bold flex-shrink-0"
+                    style={{ background: w.color, color: w.numColor, borderColor: "currentColor" }}
+                  >
+                    {w.n}
+                  </span>
+                  <div>
+                    <div className="font-extrabold text-[17px] mb-[3px]">{w.title}</div>
+                    <div className="text-sm opacity-70 font-medium leading-[1.5]">{w.detail}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Four evaluation questions */}
+          <section className="mb-16">
+            <CapstoneEval />
+          </section>
+
+          {/* Deliverable */}
+          <section className="mb-16">
+            <div className="border-[3px] border-[#FAF3E7] rounded-[22px] bg-[#FAF3E7] text-[#191510] p-[30px_34px] flex items-center gap-7 shadow-[8px_8px_0_#FF4D24]">
+              <div className="w-[84px] h-[84px] rounded-full bg-[var(--brand)] border-[3px] border-[#191510] flex items-center justify-center text-[40px] flex-shrink-0 -rotate-6">
+                🚀
+              </div>
+              <div className="flex-1">
+                <div className="font-mono text-xs font-bold tracking-[0.16em] uppercase text-[var(--brand)] mb-1.5">
+                  Capstone deliverable
+                </div>
+                <h3 className="font-extrabold text-[24px] tracking-[-0.02em] mb-2">
+                  A polished, live landing page
+                </h3>
+                <p className="text-[15px] opacity-75 leading-[1.6] font-medium max-w-[640px]">
+                  A live URL. A complete PR description with screenshots and Figma link. A Vibe Session Log showing your journey from Module 0 to now. Four yes answers. This is your portfolio proof.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* After the capstone */}
+          <section className="mb-14">
+            <h2 className="text-[30px] font-extrabold tracking-[-0.025em] mb-2">
+              After the capstone<span className="text-[#FFC933]">?</span>
+            </h2>
+            <p className="text-[15.5px] opacity-70 mb-5 font-medium max-w-[640px]">
+              Natural next levels — but first, ship the capstone. The best next step is always a project, not another module.
+            </p>
+            <div className="flex gap-3 flex-wrap">
+              {nextTopics.map((n) => (
+                <span
+                  key={n}
+                  className="inline-block px-5 py-2.5 rounded-full border-[2px] border-[#FAF3E7]/35 text-[14.5px] font-bold transition-all duration-[140ms] hover:border-[#FFC933] hover:text-[#FFC933]"
+                >
+                  {n}
+                </span>
+              ))}
+            </div>
+          </section>
+
+          {/* Prev / back */}
+          <div className="flex items-stretch justify-between gap-5 pt-2">
+            <Link
+              href="/curriculum"
+              className="flex flex-col gap-1.5 px-6 py-5 rounded-[18px] border-[3px] border-[#FAF3E7] hover:bg-[#FAF3E7]/[0.08] transition-all flex-[0_1_40%]"
+            >
+              <span className="font-mono text-xs font-bold opacity-60">← Back to</span>
+              <span className="font-extrabold text-[17px]">The Syllabus</span>
+            </Link>
+            <Link
+              href="/"
+              className="flex flex-col items-end gap-1.5 px-6 py-5 rounded-[18px] border-[3px] border-[#191510] bg-[#FFC933] text-[#191510] shadow-[4px_4px_0_#FAF3E7] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex-[0_1_40%] text-right"
+            >
+              <span className="font-mono text-xs font-bold opacity-70">Course complete →</span>
+              <span className="font-extrabold text-[17px]">Back to start 🎓</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <footer className="border-t-[2px] border-[#FAF3E7]/15">
+          <div className="max-w-[1240px] mx-auto px-7 py-9 flex items-center justify-between flex-wrap gap-5">
+            <span className="text-sm font-semibold">Design Engineering for UX Designers — ITX UX AI Workshop</span>
+            <div className="flex items-center gap-5 text-sm">
+              <Link href="/curriculum" className="text-[#FAF3E7]/70 hover:text-[#FFC933] transition-colors">Syllabus</Link>
+              <Link href="/resources" className="text-[#FAF3E7]/70 hover:text-[#FFC933] transition-colors">Resources</Link>
+              <Link href="/glossary" className="text-[#FAF3E7]/70 hover:text-[#FFC933] transition-colors">Glossary</Link>
+              <span className="font-mono text-xs opacity-50">© 2026</span>
+            </div>
+          </div>
+        </footer>
+      </div>
+    );
+  }
+
   // Build sidebar sections with IDs that match section elements
   const sidebarSections = [
     { heading: "Learning Objectives", id: "learning-objectives" },
     {
       heading: "Core Concepts",
       id: "core-concepts",
-      subs: content.concepts.map((c) => ({ label: c.title, id: c.id })),
+      subs: content.concepts.map((c, i) => ({
+        label: c.title,
+        id: c.id,
+        num: String(i + 1).padStart(2, "0"),
+      })),
     },
     { heading: "Hands-On Exercise", id: "hands-on-exercise" },
     { heading: "Deliverable", id: "deliverable" },
   ];
 
-  const isCapstone = slug === capstoneModule.slug;
-
   return (
     <div className="min-h-screen flex flex-col">
+      <ModuleLockGate slug={slug} />
       <SiteNav />
+      <ModuleStepper currentSlug={slug} />
 
-      <div className="flex-1 max-w-6xl mx-auto px-6 pt-8 pb-20 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10">
+      <main className="max-w-[1240px] mx-auto px-7 pt-12 pb-20 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-[52px]">
           {/* Sidebar */}
           <ModuleSidebar
             sections={sidebarSections}
             slug={slug}
-            accentDot={colors.dot}
+            accentDot="bg-foreground"
           />
 
           {/* Main content */}
-          <main className="min-w-0">
-            {/* Module header */}
-            <header className="pb-8 mb-8 border-b border-border">
-              {/* Phase-grouped stepper */}
-              <ModuleStepper currentSlug={slug} />
-
-              <div className="flex items-center gap-2 mb-3">
-                <Badge variant="outline" className={`border font-mono text-xs ${colors.badge}`}>
+          <div className="min-w-0">
+            {/* ─── Module Header ─── */}
+            <header className="mb-12">
+              {/* Badges row */}
+              <div className="flex gap-2.5 mb-5 flex-wrap">
+                <span
+                  className="font-mono text-xs font-bold uppercase tracking-[0.1em] border-[2px] border-[#191510] rounded-lg px-3 py-1.5 shadow-[2px_2px_0_#191510] -rotate-[1.5deg] inline-block"
+                  style={{ backgroundColor: pStyle.bg, color: pStyle.text }}
+                >
                   {mod.phase}
-                </Badge>
-                <Badge variant="outline" className="border-border text-muted-foreground font-mono text-xs">
-                  {isCapstone ? "Capstone" : `Module ${mod.num}`}
-                </Badge>
-                <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted rounded-full px-3 py-1 font-mono ml-auto">
-                  ⏱ {mod.duration}
+                </span>
+                <span className="font-mono text-xs font-bold uppercase tracking-[0.1em] bg-white border-[2px] border-[#191510] rounded-lg px-3 py-1.5 shadow-[2px_2px_0_#191510] rotate-1 inline-block text-[#191510]">
+                  {mod.duration}
+                </span>
+                <span className="font-[family-name:var(--font-caveat)] text-[22px] font-bold text-[#1FA45B] ml-1.5 self-center">
+                  {slug === "module-00" ? "the fun starts here \u2193" : "keep going! \u2193"}
                 </span>
               </div>
 
-              <h1 className="text-3xl lg:text-4xl font-bold tracking-tight mb-3">
-                {mod.title}
-              </h1>
-              <p className="text-muted-foreground leading-relaxed max-w-2xl">
-                {mod.overview}
-              </p>
+              {/* Title area */}
+              <div className="flex items-start gap-7">
+                <span
+                  className="text-[150px] font-extrabold leading-[0.8] tracking-[-0.07em] text-transparent flex-shrink-0 tabular-nums -rotate-3 select-none"
+                  style={{ WebkitTextStroke: "3px #191510" }}
+                >
+                  {isCapstone ? "\u2605" : mod.num}
+                </span>
+                <div>
+                  <h1 className="text-[clamp(44px,5vw,64px)] font-extrabold tracking-[-0.035em] leading-none mb-3.5">
+                    {mod.title}
+                  </h1>
+                  <p className="text-[18px] leading-[1.6] max-w-[600px] font-medium">
+                    {mod.overview}
+                  </p>
+                </div>
+              </div>
             </header>
 
             {/* ─── Learning Objectives ─── */}
-            <section id="learning-objectives" className="mb-10 scroll-mt-20">
-              <h2 className="text-lg font-bold mb-4">Learning Objectives</h2>
-              <ul className="space-y-3">
+            <section id="learning-objectives" className="mb-12 scroll-mt-24">
+              <h2 className="text-[32px] font-extrabold mb-5.5">
+                You&rsquo;ll learn to<span className="text-[var(--brand)]">&hellip;</span>
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {content.objectives.map((obj, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <div
-                      className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 font-mono text-[10px] font-bold text-white ${colors.dot}`}
+                  <div
+                    key={i}
+                    className="flex items-start gap-3.5 border-[2px] border-[#191510] rounded-2xl bg-white p-4 px-[18px] shadow-[3px_3px_0_#191510] hover:-translate-y-[3px] hover:-rotate-[0.5deg] transition-transform duration-[140ms]"
+                  >
+                    <span
+                      className="text-[34px] font-extrabold leading-none tabular-nums flex-shrink-0"
+                      style={{ color: pStyle.bg }}
                     >
-                      {i + 1}
-                    </div>
-                    <span className="text-sm text-foreground leading-relaxed">{obj}</span>
-                  </li>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-[15px] font-semibold leading-[1.5]">{obj}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </section>
-
-            <Separator className="my-8" />
 
             {/* ─── Core Concepts ─── */}
-            <section id="core-concepts" className="mb-10 scroll-mt-20">
-              <h2 className="text-lg font-bold mb-6">Core Concepts</h2>
-              <div className="space-y-10">
-                {content.concepts.map((concept, ci) => (
-                  <div key={concept.id} id={concept.id} className="scroll-mt-24">
-                    {/* Concept header */}
-                    <div className="flex items-center gap-2.5 mb-3">
-                      <div
-                        className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${colors.dot}`}
-                      >
-                        <span className="font-mono text-[9px] font-bold text-white">
-                          {String(ci + 1).padStart(2, "0")}
-                        </span>
-                      </div>
-                      <h3 className="font-semibold text-base">{concept.title}</h3>
+            <section id="core-concepts" className="mb-12 scroll-mt-24">
+              <h2 className="text-[32px] font-extrabold mb-6.5">
+                Core concepts<span className="text-[#7B5CFF]">.</span>
+              </h2>
+
+              <div className="space-y-6.5">
+                {content.concepts.map((concept, i) => (
+                  <div
+                    key={concept.id}
+                    id={concept.id}
+                    className="border-[3px] border-[#191510] rounded-[22px] bg-white overflow-hidden shadow-[5px_5px_0_#191510] scroll-mt-24"
+                  >
+                    {/* Concept header bar */}
+                    <div
+                      className="flex items-center gap-4 px-6 py-[18px] border-b-[3px] border-[#191510]"
+                      style={{ backgroundColor: pStyle.bg, color: pStyle.text }}
+                    >
+                      <span className="text-[44px] font-extrabold leading-none tabular-nums opacity-90">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <h3 className="font-extrabold text-[21px] tracking-[-0.015em]">
+                        {concept.title}
+                      </h3>
                     </div>
 
-                    {/* Body */}
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-4 pl-7">
-                      {concept.body}
-                    </p>
-
-                    {/* Bullets */}
-                    {concept.bullets && concept.bullets.length > 0 && (
-                      <ul className="space-y-2 pl-7 mb-4">
-                        {concept.bullets.map((b, bi) => (
-                          <li key={bi} className="flex items-start gap-2.5 text-sm text-muted-foreground">
-                            <div
-                              className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${colors.dot} opacity-70`}
+                    {/* Concept body */}
+                    <div className="px-6 py-5.5">
+                      {/* Framed icon/image — floats beside the intro text */}
+                      {concept.image && (
+                        <figure className="float-right ml-5 mb-3 w-[104px] sm:w-[120px]">
+                          <div className="rounded-[18px] border-[3px] border-[#191510] bg-white p-2.5 shadow-[3px_3px_0_#191510]">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={concept.image.src}
+                              alt={concept.image.alt}
+                              className="w-full h-auto block rounded-[10px]"
                             />
-                            <span className="leading-relaxed">{b}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-
-                    {/* Code block */}
-                    {concept.code && (
-                      <div className="pl-7 mb-4">
-                        <div className="rounded-xl border border-border overflow-hidden">
-                          <div className="flex items-center justify-between px-4 py-2.5 bg-muted border-b border-border">
-                            <span className="text-xs font-mono text-muted-foreground uppercase tracking-wide">
-                              {concept.code.lang}
-                            </span>
                           </div>
-                          <pre className="p-4 text-xs leading-relaxed overflow-x-auto bg-card">
-                            <code className="text-foreground font-mono whitespace-pre">
-                              {concept.code.content}
-                            </code>
-                          </pre>
-                        </div>
-                      </div>
-                    )}
+                          {concept.image.caption && (
+                            <figcaption className="mt-1.5 text-center text-[11px] leading-tight font-medium opacity-55">
+                              {concept.image.caption}
+                            </figcaption>
+                          )}
+                        </figure>
+                      )}
 
-                    {/* Table */}
-                    {concept.table && concept.table.length > 0 && (
-                      <div className="pl-7 mb-4 overflow-x-auto">
-                        <table className="w-full text-sm border-collapse">
-                          <thead>
-                            <tr className="border-b border-border">
-                              <th className="text-left py-2 px-3 text-xs font-mono uppercase tracking-wide text-muted-foreground bg-muted/50 rounded-tl-lg">
-                                {concept.tableLabels?.left ?? "Concept"}
-                              </th>
-                              <th className="text-left py-2 px-3 text-xs font-mono uppercase tracking-wide text-muted-foreground bg-muted/50 rounded-tr-lg">
-                                {concept.tableLabels?.right ?? "Equivalent"}
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {concept.table.map((row, ri) => (
-                              <tr
-                                key={ri}
-                                className={`border-b border-border last:border-0 ${ri % 2 === 0 ? "" : "bg-muted/20"}`}
+                      {/* Body text */}
+                      <p className="text-[15.5px] leading-[1.65] font-medium mb-[18px]">
+                        {concept.body}
+                      </p>
+
+                      {/* Callout — disclaimers, reminders, checklists */}
+                      {concept.callout && (() => {
+                        const tone = concept.callout.tone ?? "info";
+                        const toneStyle: Record<string, { bg: string; badge: string; icon: string; label: string }> = {
+                          info:    { bg: "#EAF1FF", badge: "#2545D3", icon: "ℹ", label: "Note" },
+                          note:    { bg: "#F1ECFF", badge: "#7B5CFF", icon: "✎", label: "Note" },
+                          warn:    { bg: "#FFF0E8", badge: "#FF4D24", icon: "!", label: "Heads up" },
+                          success: { bg: "#E7F8EF", badge: "#1FA45B", icon: "✓", label: "Standard" },
+                        };
+                        const s = toneStyle[tone];
+                        return (
+                          <div
+                            className="clear-both mb-[18px] rounded-[16px] border-[3px] border-[#191510] p-[18px] shadow-[3px_3px_0_#191510]"
+                            style={{ backgroundColor: s.bg }}
+                          >
+                            <div className="flex items-center gap-2.5 mb-2">
+                              <span
+                                className="flex h-6 w-6 items-center justify-center rounded-full border-[2px] border-[#191510] text-[12px] font-bold text-white"
+                                style={{ backgroundColor: s.badge }}
                               >
-                                <td className="py-2 px-3 text-sm font-medium text-foreground align-top">
-                                  {row.left}
-                                </td>
-                                <td className="py-2 px-3 text-sm text-muted-foreground font-mono align-top">
-                                  {row.right}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
+                                {s.icon}
+                              </span>
+                              <span className="font-extrabold text-[14.5px] tracking-[-0.01em]">
+                                {concept.callout.title ?? s.label}
+                              </span>
+                            </div>
+                            <p className="text-[14px] leading-[1.6] font-medium">
+                              {concept.callout.body}
+                            </p>
+                            {concept.callout.bullets && concept.callout.bullets.length > 0 && (
+                              <ul className="mt-2.5 flex flex-col gap-1.5">
+                                {concept.callout.bullets.map((b, bi) => (
+                                  <li key={bi} className="flex items-start gap-2.5 text-[13.5px] leading-[1.5] font-medium">
+                                    <span className="mt-[7px] h-1.5 w-1.5 rounded-full bg-[#191510] flex-shrink-0" />
+                                    <span>{b}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        );
+                      })()}
 
-                    {/* Divider between concepts (not after last) */}
-                    {ci < content.concepts.length - 1 && (
-                      <div className="pl-7 mt-6">
-                        <div className="h-px bg-border/50" />
-                      </div>
-                    )}
+                      {/* Bullets */}
+                      {concept.bullets && concept.bullets.length > 0 && (
+                        <ul className="list-none flex flex-col gap-2.5 mb-[18px]">
+                          {concept.bullets.map((b, bi) => (
+                            <li key={bi} className="flex items-start gap-3 text-[14.5px] leading-[1.55]">
+                              <span
+                                className="mt-[5px] w-2.5 h-2.5 rounded-[3px] border-[2px] border-[#191510] flex-shrink-0"
+                                style={{ backgroundColor: pStyle.bg }}
+                              />
+                              <span>{b}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+
+                      {/* Single code block */}
+                      {concept.code && !concept.figmaPanel && (
+                        <div className="mb-[18px]">
+                          <CodeBlock code={concept.code.content} lang={concept.code.lang} />
+                        </div>
+                      )}
+
+                      {/* Code ↔ Figma panel, side by side */}
+                      {concept.code && concept.figmaPanel && (
+                        <div className="mb-[18px] grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-stretch">
+                          <div className="min-w-0 [&>div]:h-full">
+                            <CodeBlock code={concept.code.content} lang={concept.code.lang} />
+                          </div>
+                          <FigmaPanel variant={concept.figmaPanel} />
+                        </div>
+                      )}
+
+                      {/* Multiple labeled code blocks */}
+                      {concept.codeBlocks && concept.codeBlocks.length > 0 && !concept.cardCompare && (
+                        <div className="mb-[18px] space-y-3">
+                          {concept.codeBlocks.map((cb, cbi) => (
+                            <CodeBlock key={cbi} code={cb.content} lang={cb.lang} label={cb.label} />
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Side-by-side: prompt/code ↔ the card each approach produces */}
+                      {concept.cardCompare && concept.codeBlocks && concept.codeBlocks.length > 0 && (
+                        <div className="mb-[18px] grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-stretch">
+                          <div className="min-w-0 [&>div]:h-full">
+                            <CodeBlock
+                              code={concept.codeBlocks[0].content}
+                              lang={concept.codeBlocks[0].lang}
+                              label={concept.codeBlocks[0].label}
+                            />
+                          </div>
+                          <CardCompareTabs />
+                        </div>
+                      )}
+
+                      {/* Figma embeds */}
+                      {concept.figmaEmbeds && concept.figmaFileKey && (
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-[18px]">
+                          {concept.figmaEmbeds.map((embed) => {
+                            const embedUrl = `https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/design/${concept.figmaFileKey}/?node-id=${embed.nodeId}`;
+                            const figmaUrl = `https://www.figma.com/design/${concept.figmaFileKey}/?node-id=${embed.nodeId}`;
+                            return (
+                              <div
+                                key={embed.nodeId}
+                                className="border-[3px] border-[#191510] rounded-[18px] overflow-hidden shadow-[3px_3px_0_#191510]"
+                              >
+                                <div className="relative w-full" style={{ paddingBottom: "62.5%" }}>
+                                  <iframe
+                                    src={embedUrl}
+                                    className="absolute inset-0 w-full h-full"
+                                    allowFullScreen
+                                    title={embed.title}
+                                    loading="lazy"
+                                  />
+                                </div>
+                                <div className="px-4 py-3 border-t-[3px] border-[#191510] bg-white flex items-center justify-between gap-3">
+                                  <div>
+                                    <div className="text-xs font-semibold text-foreground font-mono">
+                                      {embed.title}
+                                    </div>
+                                    <div className="text-xs text-muted-foreground mt-0.5">
+                                      {embed.description}
+                                    </div>
+                                  </div>
+                                  <a
+                                    href={figmaUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-shrink-0 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+                                  >
+                                    Open in Figma &rarr;
+                                  </a>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Tool links */}
+                      {concept.tools && concept.tools.length > 0 && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-[18px]">
+                          {concept.tools.map((tool) => {
+                            const domain = new URL(tool.href).hostname;
+                            const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+                            return (
+                              <a
+                                key={tool.name}
+                                href={tool.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-start gap-3 p-3.5 border-[2px] border-[#191510] rounded-xl bg-white shadow-[2px_2px_0_#191510] hover:translate-x-1 hover:shadow-none transition-all group"
+                              >
+                                <div className="w-6 h-6 rounded overflow-hidden bg-[#FAF3E7] flex items-center justify-center flex-shrink-0 mt-0.5">
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
+                                    src={faviconUrl}
+                                    alt={tool.name}
+                                    width={16}
+                                    height={16}
+                                    className="w-4 h-4 object-contain"
+                                  />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1.5 mb-0.5">
+                                    <span className="text-sm font-semibold text-foreground group-hover:underline underline-offset-2">
+                                      {tool.name}
+                                    </span>
+                                    <svg
+                                      width="10"
+                                      height="10"
+                                      viewBox="0 0 10 10"
+                                      fill="none"
+                                      className="text-muted-foreground flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    >
+                                      <path
+                                        d="M2 8L8 2M8 2H4M8 2V6"
+                                        stroke="currentColor"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                      />
+                                    </svg>
+                                  </div>
+                                  <p className="text-xs text-muted-foreground leading-relaxed">
+                                    {tool.description}
+                                  </p>
+                                </div>
+                              </a>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Tab groups */}
+                      {concept.tabs && concept.tabs.length > 0 && (
+                        <div className="mb-[18px]">
+                          <TabGroupWrapper tabs={concept.tabs} />
+                        </div>
+                      )}
+
+                      {/* Table */}
+                      {concept.table && concept.table.length > 0 && (
+                        <div className="border-[2px] border-[#191510] rounded-xl overflow-hidden mb-[18px]">
+                          <table className="w-full text-sm border-collapse">
+                            <thead>
+                              <tr>
+                                <th
+                                  className="text-left py-2.5 px-4 font-mono text-xs uppercase tracking-wide"
+                                  style={{ backgroundColor: pStyle.bg, color: pStyle.text }}
+                                >
+                                  {concept.tableLabels?.left ?? "Concept"}
+                                </th>
+                                <th
+                                  className="text-left py-2.5 px-4 font-mono text-xs uppercase tracking-wide"
+                                  style={{ backgroundColor: pStyle.bg, color: pStyle.text }}
+                                >
+                                  {concept.tableLabels?.right ?? "Equivalent"}
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {concept.table.map((row, ri) => (
+                                <tr
+                                  key={ri}
+                                  className="border-t border-[#191510]/15"
+                                  style={{
+                                    backgroundColor: ri % 2 === 0 ? "#FFFFFF" : "#FAF3E7",
+                                  }}
+                                >
+                                  <td className="py-2.5 px-4 text-sm font-medium text-foreground align-top">
+                                    {row.left}
+                                  </td>
+                                  <td className="py-2.5 px-4 text-sm text-muted-foreground font-mono align-top">
+                                    {row.right}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+
+                      {/* Tweet quote */}
+                      {concept.tweet && (
+                        <div className="mb-[18px]">
+                          <a
+                            href={concept.tweet.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block border-[3px] border-[#191510] rounded-[18px] overflow-hidden shadow-[3px_3px_0_#191510] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all group"
+                          >
+                            {/* Tweet header */}
+                            <div className="flex items-center gap-3 px-5 pt-5 pb-3 border-b-[3px] border-[#191510]">
+                              <div className="w-9 h-9 rounded-full bg-foreground flex items-center justify-center flex-shrink-0">
+                                <span className="text-background text-xs font-bold font-mono">
+                                  {concept.tweet.author
+                                    .split(" ")
+                                    .map((w) => w[0])
+                                    .join("")
+                                    .slice(0, 2)
+                                    .toUpperCase()}
+                                </span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="font-semibold text-sm text-foreground">
+                                  {concept.tweet.author}
+                                </div>
+                                <div className="text-xs text-muted-foreground font-mono">
+                                  {concept.tweet.handle}
+                                </div>
+                              </div>
+                              <svg
+                                viewBox="0 0 24 24"
+                                className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0"
+                                fill="currentColor"
+                              >
+                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.745l7.733-8.835L1.254 2.25H8.08l4.253 5.622 5.912-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                              </svg>
+                            </div>
+
+                            {/* Tweet body */}
+                            <div className="px-5 py-4">
+                              <p className="text-sm text-foreground leading-relaxed">
+                                {concept.tweet.text}
+                              </p>
+                            </div>
+
+                            {/* Tweet footer */}
+                            <div className="px-5 pb-4 flex items-center justify-between">
+                              <span className="text-xs text-muted-foreground font-mono">
+                                {concept.tweet.date}
+                              </span>
+                              <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors font-mono">
+                                View on X &rarr;
+                              </span>
+                            </div>
+                          </a>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
             </section>
 
-            <Separator className="my-8" />
-
-            {/* ─── Hands-On Exercise ─── */}
-            <section id="hands-on-exercise" className="mb-10 scroll-mt-20">
-              <div
-                className={`rounded-xl border border-l-4 ${colors.border} border-border/60 ${colors.bg} overflow-hidden`}
-              >
-                <div className="p-6">
-                  <div className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-2">
-                    Hands-On Exercise
-                  </div>
-                  <h2 className="text-lg font-bold mb-2">{content.exercise.title}</h2>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-                    {content.exercise.description}
-                  </p>
-
-                  <ol className="space-y-3 mb-6">
-                    {content.exercise.steps.map((step, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <div
-                          className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 font-mono text-xs font-bold text-white ${colors.dot}`}
-                        >
-                          {i + 1}
-                        </div>
-                        <span className="text-sm text-foreground leading-relaxed pt-0.5">
-                          {step}
-                        </span>
-                      </li>
-                    ))}
-                  </ol>
-
-                  <div className="pt-4 border-t border-border/40">
-                    <div className="text-xs text-muted-foreground font-mono mb-3 uppercase tracking-wide">
-                      Document in
-                    </div>
-                    <a
-                      href="#"
-                      className="inline-flex items-center gap-2 px-4 py-2.5 bg-foreground text-background rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
-                    >
-                      Your Vibe Session Log →
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* ─── Deliverable ─── */}
-            <section id="deliverable" className="mb-10 scroll-mt-20">
-              <div className="rounded-xl border border-border p-6">
-                <div className="flex items-start gap-4">
-                  <div
-                    className={`w-10 h-10 rounded-lg ${colors.bg} flex items-center justify-center flex-shrink-0 border border-border`}
-                  >
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className={colors.accent}>
-                      <path
-                        d="M9 2L11.09 7.26L17 8.27L13 12.14L14.18 18L9 15.27L3.82 18L5 12.14L1 8.27L6.91 7.26L9 2Z"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-1">
-                      Module Deliverable
-                    </div>
-                    <h3 className="font-bold text-base mb-2">{content.deliverable.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {content.deliverable.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* ─── Prev / Next ─── */}
-            <div className="flex items-center justify-between gap-4 pt-8 border-t border-border">
-              {prev ? (
-                <Link
-                  href={`/modules/${prev.slug}`}
-                  className="flex flex-col gap-1 p-4 rounded-lg border border-border hover:border-foreground hover:shadow-sm transition-all group max-w-[45%]"
-                >
-                  <span className="text-xs text-muted-foreground font-mono">← Previous</span>
-                  <span className="text-sm font-medium truncate">{prev.title}</span>
-                </Link>
-              ) : (
-                <Link
-                  href="/curriculum"
-                  className="flex flex-col gap-1 p-4 rounded-lg border border-border hover:border-foreground hover:shadow-sm transition-all group"
-                >
-                  <span className="text-xs text-muted-foreground font-mono">← Back to</span>
-                  <span className="text-sm font-medium">Curriculum</span>
-                </Link>
-              )}
-              {next && (
-                <Link
-                  href={`/modules/${next.slug}`}
-                  className="flex flex-col gap-1 p-4 rounded-lg border border-border hover:border-foreground hover:shadow-sm transition-all group text-right max-w-[45%] ml-auto"
-                >
-                  <span className="text-xs text-muted-foreground font-mono">Next →</span>
-                  <span className="text-sm font-medium truncate">{next.title}</span>
-                </Link>
-              )}
-            </div>
-          </main>
+            {/* ─── Hands-On Exercise + Deliverable + Quiz + gated Next ─── */}
+            <ModuleCompletion
+              slug={slug}
+              accentBg={pStyle.bg}
+              accentText={pStyle.text}
+              exercise={content.exercise}
+              deliverable={content.deliverable}
+              quiz={content.quiz}
+              prev={prev ? { slug: prev.slug, title: prev.title } : null}
+              next={next ? { slug: next.slug, title: next.title } : null}
+            />
+          </div>
         </div>
-      </div>
+      </main>
 
       {/* Footer */}
-      <footer className="border-t border-border">
-        <div className="max-w-6xl mx-auto px-6 py-8 flex items-center justify-between text-xs text-muted-foreground">
+      <footer className="border-t-[3px] border-[#191510]">
+        <div className="max-w-[1240px] mx-auto px-7 py-8 flex items-center justify-between text-xs text-muted-foreground">
           <Link href="/curriculum" className="hover:text-foreground transition-colors">
-            ← Back to Curriculum
+            &larr; Back to Curriculum
           </Link>
-          <span>© 2026 Vibe Coding for Designers</span>
+          <span>&copy; 2026 Design Engineering</span>
         </div>
       </footer>
     </div>

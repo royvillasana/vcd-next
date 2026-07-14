@@ -1,69 +1,56 @@
 import Link from "next/link";
 import { SiteNav } from "@/components/site-nav";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 
+/* ─── Phase data ─── */
 const phases = [
   {
-    id: "phase0",
     num: "00",
     name: "Foundation",
-    description: "Understand the vibe coding mindset and set up your workflow.",
-    modules: 1,
-    dot: "bg-stone-400",
+    desc: "Understand the design-engineering mindset and set up your workflow.",
+    bg: "#F0E5D3",
+    text: "#191510",
+    tilt: "-1.5deg",
+    modules: "1 module",
   },
   {
-    id: "phase1",
     num: "01",
     name: "Read the Stack",
-    description: "Learn to read code like a designer and work with Figma, Storybook, and design.md.",
-    modules: 5,
-    dot: "bg-slate-500",
+    desc: "Learn to read code like a designer — Figma, Storybook, and design.md.",
+    bg: "#DBEAFE",
+    text: "#191510",
+    tilt: "1deg",
+    modules: "5 modules",
   },
   {
-    id: "phase2",
     num: "02",
     name: "Write Specs",
-    description: "Translate design decisions into precise, AI-readable specifications.",
-    modules: 1,
-    dot: "bg-violet-500",
+    desc: "Translate design decisions into precise, AI-readable specifications.",
+    bg: "#B9A5FF",
+    text: "#191510",
+    tilt: "-0.8deg",
+    modules: "1 module",
   },
   {
-    id: "phase3",
     num: "03",
     name: "Build with AI",
-    description: "Run your first AI coding sessions, build components, and sync with design.",
-    modules: 3,
-    dot: "bg-emerald-500",
+    desc: "Run your first AI coding sessions, build components, and sync with design.",
+    bg: "#6FE3A5",
+    text: "#191510",
+    tilt: "1.2deg",
+    modules: "3 modules",
   },
   {
-    id: "phase4",
     num: "04",
     name: "Ship It",
-    description: "Navigate code review, deploy to production, and close the design-dev loop.",
-    modules: 2,
-    dot: "bg-amber-500",
+    desc: "Navigate code review, deploy to production, and close the design-dev loop.",
+    bg: "#FFC933",
+    text: "#191510",
+    tilt: "-0.5deg",
+    modules: "2 modules",
   },
 ];
 
-const specTypes = [
-  {
-    num: "01",
-    title: "Component Spec",
-    description: "Props, variants, states, and design tokens for every reusable UI element.",
-  },
-  {
-    num: "02",
-    title: "Interaction Spec",
-    description: "Triggers, transitions, timing, and easing that describe how things move.",
-  },
-  {
-    num: "03",
-    title: "Page / Feature Spec",
-    description: "Layout zones, content structure, and full-system behaviour patterns.",
-  },
-];
-
+/* ─── Pipeline items ─── */
 const pipeline = [
   "Figma components with token-connected styles",
   "Storybook for isolated component testing",
@@ -74,200 +61,321 @@ const pipeline = [
   "Vercel for continuous deployment",
 ];
 
+/* ─── Spec types ─── */
+const specTypes = [
+  {
+    num: "01",
+    title: "Component Spec",
+    desc: "Props, variants, states, and design tokens for every reusable UI element.",
+    hoverBg: "#FFC933",
+    tilt: "-0.6deg",
+  },
+  {
+    num: "02",
+    title: "Interaction Spec",
+    desc: "Triggers, transitions, timing, and easing that describe how things move.",
+    hoverBg: "#B9A5FF",
+    tilt: "0.6deg",
+  },
+  {
+    num: "03",
+    title: "Page / Feature Spec",
+    desc: "Layout zones, content structure, and full-system behaviour patterns.",
+    hoverBg: "#6FE3A5",
+    tilt: "-0.4deg",
+  },
+];
+
+/* ─── Marquee items ─── */
+const marqueeItems = [
+  "Figma",
+  "✦",
+  "Claude Code",
+  "✦",
+  "Storybook",
+  "✦",
+  "design.md",
+  "✦",
+  "CLAUDE.md",
+  "✦",
+  "SDD-DE",
+  "✦",
+  "Git",
+  "✦",
+  "Vercel",
+  "✦",
+  "Specs",
+  "✦",
+  "Tokens",
+  "✦",
+  "Components",
+  "✦",
+  "Ship It",
+];
+
 export default function Home() {
+  const marqueeContent = marqueeItems.map((item, i) => (
+    <span
+      key={i}
+      className="text-[#FAF3E7] font-extrabold text-[20px] tracking-wide mx-4"
+    >
+      {item}
+    </span>
+  ));
+
   return (
     <div className="min-h-screen flex flex-col">
+      {/* ─── 1. SiteNav ─── */}
       <SiteNav />
 
-      {/* Hero */}
-      <section className="max-w-6xl mx-auto px-6 pt-20 pb-24 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Left */}
+      {/* ─── 2. Hero Section ─── */}
+      <section className="max-w-[1240px] mx-auto px-7 pt-[72px] pb-10 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left — text content */}
           <div>
-            <Badge
-              variant="outline"
-              className="mb-6 text-xs font-mono tracking-widest uppercase border-[var(--brand)] text-[var(--brand)]"
+            {/* Kicker badge */}
+            <div
+              className="inline-block font-mono text-[13px] font-bold uppercase tracking-[0.14em] bg-[var(--accent-yellow)] border-[2px] border-[#191510] rounded-lg px-3.5 py-1.5 shadow-[3px_3px_0_#191510] -rotate-[1.5deg] mb-8 animate-[vcd-pop_500ms_ease-out_both]"
             >
-              5-Phase Course · 13 Modules
-            </Badge>
+              ITX UX · AI Workshop · 5 phases
+            </div>
+
+            {/* H1 */}
             <h1
-              className="text-5xl lg:text-6xl leading-[1.08] tracking-tight font-bold text-foreground mb-6"
-              style={{ fontFamily: "var(--font-display)" }}
+              className="text-[clamp(52px,7vw,100px)] leading-[0.95] tracking-[-0.04em] font-extrabold animate-[vcd-pop_600ms_ease-out_100ms_both]"
             >
-              Design in Figma.{" "}
-              <span className="text-[var(--brand)]">Build with AI.</span>
+              From design to{" "}
+              <span
+                className="inline-block bg-[var(--brand)] text-[#FAF3E7] px-[18px] pb-1.5 rounded-[18px] -rotate-2 border-[3px] border-[#191510] shadow-[5px_5px_0_#191510]"
+              >
+                production code
+              </span>
+              <br />
+              with AI.
             </h1>
-            <p className="text-lg text-muted-foreground leading-relaxed mb-10 max-w-lg">
-              A practical course that teaches UX designers how to take their
-              designs from Figma all the way to production code — using Claude
-              Code as your engineering partner.
+
+            {/* Subtitle */}
+            <p className="text-[21px] leading-[1.55] max-w-[560px] mt-8 mb-10 font-medium animate-[vcd-pop_600ms_ease-out_200ms_both]">
+              The hands-on design engineering course that takes UX designers
+              from Figma frames to{" "}
+              <span className="border-b-[4px] border-[var(--accent-yellow)]">
+                production code
+              </span>{" "}
+              — with Claude Code as your engineering partner. Read the stack, write real specs, ship it.
             </p>
-            <div className="flex items-center gap-3 flex-wrap">
+
+            {/* CTAs */}
+            <div className="flex items-center gap-4 flex-wrap animate-[vcd-pop_600ms_ease-out_300ms_both]">
               <Link
                 href="/curriculum"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-foreground text-background rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
+                className="inline-flex items-center gap-2.5 px-8 py-[18px] bg-foreground text-background rounded-full text-[18px] font-extrabold border-[3px] border-[#191510] shadow-[5px_5px_0_var(--brand)] hover:shadow-none hover:translate-x-[5px] hover:translate-y-[5px] transition-all duration-[120ms]"
               >
-                Start Learning Path
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                Start the journey →
               </Link>
               <Link
-                href="#pipeline"
-                className="inline-flex items-center gap-2 px-6 py-3 border border-border rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:border-foreground transition-colors"
+                href="#journey"
+                className="inline-flex items-center gap-2.5 px-8 py-[18px] bg-transparent text-foreground rounded-full text-[18px] font-bold border-[3px] border-[#191510] hover:bg-[var(--accent-yellow)] transition-all duration-[120ms]"
               >
-                How it works
+                How it works ↓
               </Link>
+              <span className="font-[family-name:var(--font-caveat)] text-[23px] font-bold -rotate-[4deg] ml-2">
+                ~40 hrs, at your pace
+              </span>
             </div>
           </div>
 
-          {/* Right — network illustration */}
-          <div className="hidden lg:block">
-            <div className="relative rounded-2xl border border-border bg-card p-8 overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-[var(--brand)]/5 to-transparent pointer-events-none" />
-              <svg viewBox="0 0 400 300" className="w-full" xmlns="http://www.w3.org/2000/svg">
-                <line x1="100" y1="80" x2="200" y2="150" stroke="currentColor" strokeOpacity="0.12" strokeWidth="1.5"/>
-                <line x1="300" y1="80" x2="200" y2="150" stroke="currentColor" strokeOpacity="0.12" strokeWidth="1.5"/>
-                <line x1="200" y1="150" x2="100" y2="220" stroke="currentColor" strokeOpacity="0.12" strokeWidth="1.5"/>
-                <line x1="200" y1="150" x2="300" y2="220" stroke="currentColor" strokeOpacity="0.12" strokeWidth="1.5"/>
-                <line x1="100" y1="80" x2="300" y2="80" stroke="currentColor" strokeOpacity="0.08" strokeWidth="1"/>
-                <line x1="100" y1="220" x2="300" y2="220" stroke="currentColor" strokeOpacity="0.08" strokeWidth="1"/>
-                <rect x="68" y="56" width="64" height="48" rx="12" fill="oklch(0.13 0 0)" />
-                <text x="100" y="75" fontSize="10" fill="white" textAnchor="middle" fontFamily="monospace" fontWeight="600">Figma</text>
-                <text x="100" y="90" fontSize="9" fill="rgba(255,255,255,0.5)" textAnchor="middle" fontFamily="monospace">design</text>
-                <circle cx="200" cy="150" r="32" fill="oklch(0.63 0.16 52)" />
-                <text x="200" y="145" fontSize="9" fill="white" textAnchor="middle" fontFamily="monospace" fontWeight="600">Claude</text>
-                <text x="200" y="158" fontSize="9" fill="rgba(255,255,255,0.8)" textAnchor="middle" fontFamily="monospace">Code</text>
-                <rect x="268" y="56" width="64" height="48" rx="12" fill="oklch(0.22 0 0)" />
-                <text x="300" y="75" fontSize="10" fill="white" textAnchor="middle" fontFamily="monospace" fontWeight="600">Spec</text>
-                <text x="300" y="90" fontSize="9" fill="rgba(255,255,255,0.5)" textAnchor="middle" fontFamily="monospace">.md</text>
-                <rect x="68" y="196" width="64" height="48" rx="12" fill="oklch(0.30 0 0)" />
-                <text x="100" y="220" fontSize="10" fill="white" textAnchor="middle" fontFamily="monospace" fontWeight="600">code</text>
-                <text x="100" y="233" fontSize="9" fill="rgba(255,255,255,0.5)" textAnchor="middle" fontFamily="monospace">.tsx</text>
-                <rect x="268" y="196" width="64" height="48" rx="12" fill="oklch(0.40 0.08 52)" />
-                <text x="300" y="220" fontSize="10" fill="white" textAnchor="middle" fontFamily="monospace" fontWeight="600">Ship</text>
-                <text x="300" y="233" fontSize="9" fill="rgba(255,255,255,0.5)" textAnchor="middle" fontFamily="monospace">prod</text>
-              </svg>
+          {/* Right — GIF card with floating stickers centered vertically */}
+          <div className="relative hidden lg:flex items-center justify-center animate-[vcd-pop_600ms_ease-out_200ms_both] min-h-[420px]">
+            {/* GIF card */}
+            <div className="border-[3px] border-[#191510] rounded-[24px] bg-[var(--accent-yellow)] shadow-[8px_8px_0_#191510] overflow-hidden rotate-[2deg]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/hero-demo.gif"
+                alt="Designer using Figma with AI coding tools to build production components"
+                className="w-full h-auto block"
+              />
+            </div>
+
+            {/* Floating stickers — positioned relative to the centered card */}
+            {/* Sticker 1 — purple, top-right */}
+            <div
+              className="absolute -top-2 -right-3 bg-[#7B5CFF] text-[#FAF3E7] font-mono text-[13px] font-bold px-4 py-2 rounded-full border-[3px] border-[#191510] shadow-[4px_4px_0_#191510] rotate-[8deg] animate-[vcd-float_5s_ease-in-out_infinite] z-10"
+            >
+              13 modules ✳
+            </div>
+            {/* Sticker 2 — green, mid-right */}
+            <div
+              className="absolute top-[45%] -right-8 bg-[#1FA45B] text-[#FAF3E7] font-mono text-[13px] font-bold px-4 py-2 rounded-full border-[3px] border-[#191510] shadow-[4px_4px_0_#191510] -rotate-[6deg] z-10"
+              style={{ animation: "vcd-float 6s ease-in-out 0.5s infinite" }}
+            >
+              no CS degree needed
+            </div>
+            {/* Sticker 3 — white handwritten, bottom-left */}
+            <div
+              className="absolute bottom-4 -left-6 bg-white text-[#191510] font-[family-name:var(--font-caveat)] text-[22px] font-bold px-5 py-2.5 rounded-2xl border-[3px] border-[#191510] shadow-[4px_4px_0_#191510] rotate-[4deg] z-10"
+              style={{ animation: "vcd-float 5.5s ease-in-out 1s infinite" }}
+            >
+              you already speak spec ✏️
             </div>
           </div>
         </div>
       </section>
 
-      {/* Phase Journey */}
-      <section id="phases" className="border-t border-border bg-card">
-        <div className="max-w-6xl mx-auto px-6 py-16">
-          <div className="flex items-baseline gap-4 mb-10">
-            <h2 className="text-2xl font-bold tracking-tight">The Learning Journey</h2>
-            <span className="text-sm text-muted-foreground font-mono">5 phases</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-            {phases.map((phase) => (
-              <Link
-                key={phase.id}
-                href={`/curriculum#${phase.id}`}
-                className="group block"
+      {/* ─── 3. Marquee Strip ─── */}
+      <div className="border-t-[3px] border-b-[3px] border-[#191510] bg-[var(--brand)] -rotate-1 scale-[1.02] my-10 overflow-hidden">
+        <div className="flex whitespace-nowrap animate-[vcd-marquee_25s_linear_infinite] w-max py-3">
+          {marqueeContent}
+          {marqueeContent}
+        </div>
+      </div>
+
+      {/* ─── 4. Journey Section ─── */}
+      <section id="journey" className="max-w-[1240px] mx-auto px-7 pt-8 pb-[88px] w-full">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-9">
+          <h2 className="text-[52px] font-extrabold tracking-[-0.03em]">
+            The journey<span className="text-[var(--brand)]">.</span>
+          </h2>
+          <span className="font-[family-name:var(--font-caveat)] text-[26px] font-bold -rotate-2">
+            5 phases → each unlocks the next ↴
+          </span>
+        </div>
+
+        {/* Phase cards grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          {phases.map((phase) => (
+            <Link
+              key={phase.num}
+              href={`/curriculum#phase${phase.num}`}
+              className="group block"
+            >
+              <div
+                className="border-[3px] border-[#191510] rounded-[22px] p-[22px_20px_24px] shadow-[5px_5px_0_#191510] transition-all duration-[140ms] group-hover:translate-y-[-6px] group-hover:shadow-[7px_7px_0_#191510] h-full"
+                style={{
+                  backgroundColor: phase.bg,
+                  color: phase.text,
+                  transform: `rotate(${phase.tilt})`,
+                }}
               >
-                <div className="border border-border rounded-xl p-4 bg-background hover:border-foreground hover:shadow-sm transition-all duration-150 h-full">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className={`w-2 h-2 rounded-full ${phase.dot}`} />
-                    <span className="font-mono text-xs text-muted-foreground font-medium">
-                      Phase {phase.num}
-                    </span>
+                <div className="text-[96px] font-extrabold leading-[0.8] tracking-[-0.06em] opacity-90 tabular-nums">
+                  {phase.num}
+                </div>
+                <div className="font-extrabold text-[19px] mb-2 mt-2">
+                  {phase.name}
+                </div>
+                <p className="text-[13.5px] leading-[1.5] opacity-85 font-medium mb-4">
+                  {phase.desc}
+                </p>
+                <span className="inline-block font-mono text-[11px] font-bold border-[2px] border-current rounded-full px-3 py-1">
+                  {phase.modules}
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── 5. Dark "What you'll master" Section ─── */}
+      <section className="bg-[#191510] text-[#FAF3E7] border-t-[3px] border-[#191510]">
+        <div className="max-w-[1240px] mx-auto px-7 py-[88px] grid grid-cols-1 lg:grid-cols-2 gap-20">
+          {/* Left column — Pipeline */}
+          <div>
+            <h2 className="text-[44px] font-extrabold tracking-[-0.03em] mb-2">
+              What you&apos;ll{" "}
+              <span className="text-[var(--accent-yellow)]">master</span>
+            </h2>
+            <p className="text-[17px] text-[#FAF3E7]/65 mb-9">
+              A complete, end-to-end design-to-code pipeline using industry
+              tools.
+            </p>
+            <ul className="space-y-3">
+              {pipeline.map((item, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-3 bg-[#FAF3E7]/[0.06] border-[2px] border-[#FAF3E7]/[0.15] rounded-[14px] px-[18px] py-[13px] hover:border-[var(--accent-yellow)] hover:translate-x-1.5 transition-all duration-[140ms]"
+                >
+                  <div className="w-7 h-7 rounded-full bg-[var(--accent-yellow)] border-[2px] border-[#191510] flex items-center justify-center shrink-0">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                    >
+                      <path
+                        d="M2.5 6L5 8.5L9.5 3.5"
+                        stroke="#191510"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </div>
-                  <div className="font-semibold text-sm text-foreground mb-2">
-                    {phase.name}
+                  <span className="text-[15px] font-medium">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Right column — 3 Spec Types */}
+          <div>
+            <h2 className="text-[44px] font-extrabold tracking-[-0.03em] mb-2">
+              3 spec types<span className="text-[var(--brand)]">.</span>
+            </h2>
+            <p className="text-[17px] text-[#FAF3E7]/65 mb-9">
+              Learn to write precise specs that AI can actually act on.
+            </p>
+            <div className="space-y-4">
+              {specTypes.map((s) => (
+                <div
+                  key={s.num}
+                  className="group/spec border-[3px] border-[#FAF3E7] rounded-[20px] px-[26px] py-6 flex gap-6 items-center transition-all duration-[140ms] hover:scale-[1.02] hover:shadow-[5px_5px_0_#FAF3E7]"
+                  style={{
+                    transform: `rotate(${s.tilt})`,
+                  }}
+                >
+                  <div className="text-[64px] font-extrabold opacity-35 tabular-nums leading-none shrink-0">
+                    {s.num}
                   </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed mb-3">
-                    {phase.description}
-                  </p>
-                  <div className="text-xs text-muted-foreground font-mono">
-                    {phase.modules} {phase.modules === 1 ? "module" : "modules"}
+                  <div>
+                    <div className="font-extrabold text-[20px] mb-1">
+                      {s.title}
+                    </div>
+                    <p className="text-[14.5px] opacity-75 leading-[1.5]">
+                      {s.desc}
+                    </p>
                   </div>
                 </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* What You'll Master */}
-      <section id="pipeline" className="border-t border-border">
-        <div className="max-w-6xl mx-auto px-6 py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight mb-2">
-                What You&apos;ll Master
-              </h2>
-              <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
-                A complete, end-to-end design-to-code pipeline using industry tools.
-              </p>
-              <ul className="space-y-3">
-                {pipeline.map((item, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <div className="mt-0.5 w-5 h-5 rounded-full bg-[var(--brand)] flex items-center justify-center flex-shrink-0">
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                        <path d="M2 5l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                    <span className="text-sm text-foreground leading-relaxed">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight mb-2">
-                3 Spec Types
-              </h2>
-              <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
-                Learn to write precise specs that AI can actually act on.
-              </p>
-              <div className="space-y-3">
-                {specTypes.map((s) => (
-                  <Card key={s.num} className="border-border shadow-none">
-                    <CardContent className="p-5 flex gap-4 items-start">
-                      <div className="font-mono text-2xl font-bold text-[var(--brand)] tabular-nums leading-none mt-0.5">
-                        {s.num}
-                      </div>
-                      <div>
-                        <div className="font-semibold text-sm mb-1">{s.title}</div>
-                        <p className="text-xs text-muted-foreground leading-relaxed">
-                          {s.description}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Band */}
-      <section className="border-t border-border bg-foreground">
-        <div className="max-w-6xl mx-auto px-6 py-14 flex flex-col sm:flex-row items-center justify-between gap-6">
+      {/* ─── 6. CTA Band ─── */}
+      <section className="border-t-[3px] border-[#191510] bg-foreground">
+        <div className="max-w-[1240px] mx-auto px-7 py-14 flex flex-col sm:flex-row justify-between items-center gap-6">
           <div>
-            <div className="text-lg font-bold text-background mb-1">
+            <div className="text-lg font-bold text-background">
               This site is built using the method it teaches.
             </div>
             <p className="text-sm text-background/60">
-              Every page, component, and spec was produced using the course workflow.
+              Every page, component, and spec was produced using the course
+              workflow.
             </p>
           </div>
           <Link
             href="/curriculum"
-            className="inline-flex items-center gap-2 px-5 py-2.5 border border-background/30 rounded-lg text-sm font-medium text-background hover:bg-background/10 transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-2 px-5 py-2.5 border-[2px] border-background/30 rounded-full text-sm font-medium text-background hover:bg-background/10 transition-colors whitespace-nowrap"
           >
             Start learning path →
           </Link>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border">
-        <div className="max-w-6xl mx-auto px-6 py-8 flex items-center justify-between text-xs text-muted-foreground">
-          <span>Vibe Coding for Designers — ITX UX AI Workshop</span>
+      {/* ─── 7. Footer ─── */}
+      <footer className="border-t-[3px] border-[#191510]">
+        <div className="max-w-[1240px] mx-auto px-7 py-12 flex items-center justify-between text-xs text-muted-foreground">
+          <span>Design Engineering for UX Designers — ITX UX AI Workshop</span>
           <span>© 2026</span>
         </div>
       </footer>
