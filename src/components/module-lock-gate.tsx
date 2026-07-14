@@ -48,6 +48,16 @@ export function ModuleLockGate({ slug }: { slug: string }) {
     };
   }, [hydrated, locked]);
 
+  // Remember the last accessible module, so the header can offer "Continue learning"
+  useEffect(() => {
+    if (!hydrated || locked) return;
+    try {
+      localStorage.setItem("vcd-last-module", slug);
+    } catch {
+      // ignore
+    }
+  }, [hydrated, locked, slug]);
+
   // Before hydration, or when unlocked, render nothing (content shows normally)
   if (!hydrated || !locked) return null;
 

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -15,6 +15,23 @@ const navLinks = [
 export function SiteNav() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Once a learner has started the path, the CTA becomes "Continue learning"
+  // pointing at their last-visited module. Otherwise it invites them to see
+  // how it works. (Persisted in localStorage; off/"How it works" by default.)
+  const [lastModule, setLastModule] = useState<string | null>(null);
+  /* eslint-disable react-hooks/set-state-in-effect -- reading persisted progress */
+  useEffect(() => {
+    try {
+      setLastModule(localStorage.getItem("vcd-last-module"));
+    } catch {
+      // ignore
+    }
+  }, [pathname]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  const ctaHref = lastModule ? `/modules/${lastModule}` : "/#journey";
+  const ctaLabel = lastModule ? "Continue learning →" : "How it works →";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b-[3px] border-foreground bg-background">
@@ -77,12 +94,12 @@ export function SiteNav() {
             </kbd>
           </button>
 
-          {/* CTA */}
+          {/* CTA — "How it works" for new visitors, "Continue learning" once started */}
           <Link
-            href="/curriculum"
+            href={ctaHref}
             className="rounded-full border-[2px] border-foreground bg-[var(--brand)] px-4 py-2 text-[14px] font-[800] text-background shadow-[3px_3px_0_#191510] transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none"
           >
-            Start learning →
+            {ctaLabel}
           </Link>
 
           {/* Mobile hamburger */}

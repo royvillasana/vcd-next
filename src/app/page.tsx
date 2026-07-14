@@ -167,14 +167,8 @@ export default function Home() {
             {/* CTAs */}
             <div className="flex items-center gap-4 flex-wrap animate-[vcd-pop_600ms_ease-out_300ms_both]">
               <Link
-                href="/curriculum"
-                className="inline-flex items-center gap-2.5 px-8 py-[18px] bg-foreground text-background rounded-full text-[18px] font-extrabold border-[3px] border-[#191510] shadow-[5px_5px_0_var(--brand)] hover:shadow-none hover:translate-x-[5px] hover:translate-y-[5px] transition-all duration-[120ms]"
-              >
-                Start the journey →
-              </Link>
-              <Link
                 href="#journey"
-                className="inline-flex items-center gap-2.5 px-8 py-[18px] bg-transparent text-foreground rounded-full text-[18px] font-bold border-[3px] border-[#191510] hover:bg-[var(--accent-yellow)] transition-all duration-[120ms]"
+                className="inline-flex items-center gap-2.5 px-8 py-[18px] bg-foreground text-background rounded-full text-[18px] font-extrabold border-[3px] border-[#191510] shadow-[5px_5px_0_var(--brand)] hover:shadow-none hover:translate-x-[5px] hover:translate-y-[5px] transition-all duration-[120ms]"
               >
                 How it works ↓
               </Link>
@@ -351,24 +345,31 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── 6. CTA Band ─── */}
-      <section className="border-t-[3px] border-[#191510] bg-foreground">
-        <div className="max-w-[1240px] mx-auto px-7 py-14 flex flex-col sm:flex-row justify-between items-center gap-6">
-          <div>
-            <div className="text-lg font-bold text-background">
-              This site is built using the method it teaches.
-            </div>
-            <p className="text-sm text-background/60">
-              Every page, component, and spec was produced using the course
-              workflow.
-            </p>
-          </div>
+      {/* ─── 6. Start-the-path CTA band ─── */}
+      <section className="w-full border-t-[3px] border-[#191510] bg-[var(--accent-yellow)]">
+        <div className="max-w-[1240px] mx-auto px-7 py-24 text-center">
+          <h2 className="text-[clamp(34px,5vw,58px)] font-extrabold tracking-[-0.035em] leading-[1.12] max-w-[720px] mx-auto mb-4">
+            You&apos;ve seen how it works.
+            <br />
+            Now{" "}
+            <span className="bg-[var(--brand)] text-[#FAF3E7] px-2 box-decoration-clone">
+              build it for real
+            </span>
+            .
+          </h2>
+          <p className="text-[18px] leading-[1.6] font-medium max-w-[520px] mx-auto mb-9 text-[#191510]/75">
+            Start the learning path and go from Figma frames to production code,
+            one module at a time.
+          </p>
           <Link
             href="/curriculum"
-            className="inline-flex items-center gap-2 px-5 py-2.5 border-[2px] border-background/30 rounded-full text-sm font-medium text-background hover:bg-background/10 transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-2.5 px-9 py-[18px] bg-foreground text-background rounded-full text-[18px] font-extrabold border-[3px] border-[#191510] shadow-[5px_5px_0_var(--brand)] hover:shadow-none hover:translate-x-[5px] hover:translate-y-[5px] transition-all duration-[120ms]"
           >
-            Start learning path →
+            Start the learning path →
           </Link>
+          <p className="mt-6 text-[13.5px] font-medium text-[#191510]/55">
+            Built with the exact method it teaches — every page, component, and spec.
+          </p>
         </div>
       </section>
 
