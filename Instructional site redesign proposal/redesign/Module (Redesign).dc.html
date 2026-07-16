@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&amp;family=Space+Mono:wght@400;700&amp;family=Caveat:wght@500;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #FAF3E7; color: #191510; font-family: 'Bricolage Grotesque', sans-serif; -webkit-font-smoothing: antialiased; }
+    @keyframes vcd-pop { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes vcd-check-pop { 0% { transform: scale(0.4); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+    @keyframes vcd-pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(255,77,36,0.5); } 70% { box-shadow: 0 0 0 10px rgba(255,77,36,0); } 100% { box-shadow: 0 0 0 0 rgba(255,77,36,0); } }
+  </style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; flex-direction: column;">
+
+  <!-- Nav -->
+  <header style="position: sticky; top: 0; z-index: 50; background: #FAF3E7; border-bottom: 3px solid #191510;">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 0 28px; height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+      <a href="redesign/Home (Redesign).dc.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+        <div style="width: 38px; height: 38px; border-radius: 999px; background: #FFC933; border: 3px solid #191510; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0 #191510;">
+          <svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M3 4L7 10L11 4" stroke="#191510" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </div>
+        <span style="font-weight: 800; font-size: 17px; letter-spacing: -0.02em; color: #191510;">Vibe Coding <span style="font-family: 'Caveat', cursive; font-size: 19px; font-weight: 700; color: #FF4D24;">for designers</span></span>
+      </a>
+      <nav style="display: flex; align-items: center; gap: 10px;">
+        <a href="redesign/Home (Redesign).dc.html" style="padding: 8px 16px; border-radius: 999px; font-size: 15px; font-weight: 600; color: #191510; text-decoration: none; border: 2px solid transparent;" style-hover="border-color: #191510;">Home</a>
+        <a href="redesign/Curriculum (Redesign).dc.html" style="padding: 8px 16px; border-radius: 999px; font-size: 15px; font-weight: 700; background: #191510; color: #FAF3E7; text-decoration: none; border: 2px solid #191510;">Syllabus</a>
+        <a href="redesign/Resources (Redesign).dc.html" style="padding: 8px 16px; border-radius: 999px; font-size: 15px; font-weight: 600; color: #191510; text-decoration: none; border: 2px solid transparent;" style-hover="border-color: #191510;">Resources</a>
+        <a href="redesign/Glossary (Redesign).dc.html" style="padding: 8px 16px; border-radius: 999px; font-size: 15px; font-weight: 600; color: #191510; text-decoration: none; border: 2px solid transparent;" style-hover="border-color: #191510;">Glossary</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Journey map strip -->
+  <div style="border-bottom: 3px solid #191510; background: white; overflow-x: auto;">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 18px 28px 44px; display: flex; align-items: center; gap: 8px; min-width: max-content;">
+      <sc-for list="{{ mapNodes }}" as="node" hint-placeholder-count="14">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <a href="{{ node.href }}" title="{{ node.title }}" style="width: {{ node.size }}; height: {{ node.size }}; border-radius: 999px; border: 3px solid #191510; background: {{ node.bg }}; color: {{ node.color }}; display: flex; align-items: center; justify-content: center; font-family: 'Space Mono', monospace; font-size: {{ node.fontSize }}; font-weight: 700; text-decoration: none; box-sizing: border-box; flex-shrink: 0; transition: transform 120ms; animation: {{ node.anim }}; position: relative;" style-hover="transform: scale(1.15);">{{ node.label }}<sc-if value="{{ node.isCurrent }}" hint-placeholder-val="{{ false }}"><span style="position: absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%) rotate(-2deg); font-family: 'Caveat', cursive; font-size: 18px; font-weight: 700; color: #FF4D24; white-space: nowrap;">↑ you are here!</span></sc-if></a>
+          <sc-if value="{{ node.showDash }}" hint-placeholder-val="{{ true }}">
+            <span style="width: 20px; height: 3px; background: {{ node.dashColor }}; border-radius: 99px; flex-shrink: 0;"></span>
+          </sc-if>
+        </div>
+      </sc-for>
+
+    </div>
+  </div>
+
+  <div style="flex: 1; max-width: 1240px; margin: 0 auto; padding: 48px 28px 80px; width: 100%; box-sizing: border-box;">
+    <div style="display: grid; grid-template-columns: 260px 1fr; gap: 52px;">
+
+      <!-- Sidebar -->
+      <aside>
+        <div style="position: sticky; top: 96px;">
+          <div style="border: 3px solid #191510; border-radius: 20px; background: white; padding: 20px; box-shadow: 5px 5px 0 #191510; margin-bottom: 20px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+              <span style="font-weight: 800; font-size: 14px;">Module progress</span>
+              <span style="font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700;">{{ progressLabel }}</span>
+            </div>
+            <div style="height: 14px; border: 2px solid #191510; border-radius: 999px; overflow: hidden; background: #FAF3E7; margin-bottom: 8px;">
+              <div style="height: 100%; background: repeating-linear-gradient(-45deg, #1FA45B 0 8px, #23B968 8px 16px); transition: width 500ms cubic-bezier(0.34, 1.56, 0.64, 1); width: {{ progressPct }};"></div>
+            </div>
+            <div style="font-family: 'Caveat', cursive; font-size: 17px; font-weight: 700; color: #7B5CFF; text-align: right;">{{ progressCheer }}</div>
+          </div>
+          <div style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; opacity: 0.55; padding: 0 4px; margin-bottom: 10px;">On this page</div>
+          <nav style="display: flex; flex-direction: column; gap: 6px;">
+            <sc-for list="{{ tocItems }}" as="t" hint-placeholder-count="5">
+              <a href="#{{ t.id }}" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; border: 2px solid {{ t.border }}; background: {{ t.bg }}; text-decoration: none; color: #191510; font-weight: {{ t.weight }}; font-size: 14px; transition: all 120ms;" style-hover="border-color: #191510;">
+                <span style="width: 20px; height: 20px; border-radius: 999px; border: 2px solid #191510; background: {{ t.dotBg }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <sc-if value="{{ t.done }}" hint-placeholder-val="{{ false }}">
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  </sc-if>
+                </span>
+                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ t.label }}</span>
+              </a>
+            </sc-for>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main style="min-width: 0;" data-screen-label="Module 00 (Redesign)">
+        <!-- Header -->
+        <header style="position: relative; margin-bottom: 48px;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+            <span style="font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: #F0E5D3; border: 2px solid #191510; border-radius: 8px; padding: 5px 12px; box-shadow: 2px 2px 0 #191510; transform: rotate(-1.5deg);">Phase 0 · Foundation</span>
+            <span style="font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: white; border: 2px solid #191510; border-radius: 8px; padding: 5px 12px; box-shadow: 2px 2px 0 #191510; transform: rotate(1deg);">⏱ 2–3 hrs</span>
+            <span style="font-family: 'Caveat', cursive; font-size: 22px; font-weight: 700; color: #1FA45B; margin-left: 6px;">the fun starts here ↓</span>
+          </div>
+          <div style="display: flex; align-items: flex-start; gap: 28px;">
+            <div style="font-size: 150px; font-weight: 800; line-height: 0.8; letter-spacing: -0.07em; color: transparent; -webkit-text-stroke: 3px #191510; flex-shrink: 0; font-variant-numeric: tabular-nums; transform: rotate(-3deg);">00</div>
+            <div>
+              <h1 style="font-size: clamp(44px, 5vw, 64px); font-weight: 800; letter-spacing: -0.035em; line-height: 1; margin: 0 0 14px;">Welcome to <span style="background: #FFC933; padding: 0 12px 4px; border-radius: 12px; border: 3px solid #191510; display: inline-block; transform: rotate(-1.5deg); box-shadow: 4px 4px 0 #191510;">Vibe Coding</span></h1>
+              <p style="font-size: 18px; line-height: 1.6; max-width: 600px; margin: 0; font-weight: 500;">Understand what vibe coding is, why it changes the designer's role, and set up your working environment.</p>
+            </div>
+          </div>
+        </header>
+
+        <!-- Objectives -->
+        <section id="sec-objectives" style="margin-bottom: 56px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px;">
+            <h2 style="font-size: 32px; font-weight: 800; letter-spacing: -0.025em; margin: 0;">You'll learn to<span style="color: #FF4D24;">…</span></h2>
+            <button onClick="{{ toggleObjectives }}" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 999px; border: 2px solid #191510; background: {{ objectivesBtnBg }}; color: {{ objectivesBtnColor }}; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 2px 2px 0 #191510; transition: all 120ms;" style-hover="box-shadow: 0 0 0 #191510; transform: translate(2px, 2px);">{{ objectivesBtnLabel }}</button>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <sc-for list="{{ objectives }}" as="obj" hint-placeholder-count="5">
+              <div style="display: flex; align-items: flex-start; gap: 14px; border: 2px solid #191510; border-radius: 16px; background: white; padding: 16px 18px; box-shadow: 3px 3px 0 #191510; transition: transform 140ms;" style-hover="transform: translateY(-3px) rotate(-0.5deg);">
+                <span style="font-size: 34px; font-weight: 800; line-height: 1; letter-spacing: -0.04em; color: {{ obj.color }}; flex-shrink: 0; font-variant-numeric: tabular-nums;">{{ obj.n }}</span>
+                <span style="font-size: 15px; font-weight: 600; line-height: 1.5;">{{ obj.text }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <!-- Concepts -->
+        <section id="sec-concepts" style="margin-bottom: 56px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 26px;">
+            <h2 style="font-size: 32px; font-weight: 800; letter-spacing: -0.025em; margin: 0;">Core concepts<span style="color: #7B5CFF;">.</span></h2>
+            <button onClick="{{ toggleConcepts }}" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 999px; border: 2px solid #191510; background: {{ conceptsBtnBg }}; color: {{ conceptsBtnColor }}; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 2px 2px 0 #191510; transition: all 120ms;" style-hover="box-shadow: 0 0 0 #191510; transform: translate(2px, 2px);">{{ conceptsBtnLabel }}</button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 26px;">
+            <sc-for list="{{ concepts }}" as="c" hint-placeholder-count="4">
+              <div id="{{ c.id }}" style="border: 3px solid #191510; border-radius: 22px; background: white; overflow: hidden; box-shadow: 5px 5px 0 #191510;">
+                <div style="display: flex; align-items: center; gap: 16px; padding: 18px 24px; border-bottom: 3px solid #191510; background: {{ c.headerBg }}; color: {{ c.headerText }};">
+                  <span style="font-size: 44px; font-weight: 800; line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; opacity: 0.9;">{{ c.n }}</span>
+                  <h3 style="font-weight: 800; font-size: 21px; margin: 0; letter-spacing: -0.015em;">{{ c.title }}</h3>
+                </div>
+                <div style="padding: 22px 26px;">
+                  <p style="font-size: 15.5px; line-height: 1.65; margin: 0 0 18px; font-weight: 500;">{{ c.body }}</p>
+                  <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px;">
+                    <sc-for list="{{ c.bullets }}" as="b" hint-placeholder-count="4">
+                      <li style="display: flex; align-items: flex-start; gap: 12px; font-size: 14.5px; line-height: 1.55;">
+                        <span style="margin-top: 5px; width: 10px; height: 10px; border-radius: 3px; background: {{ c.headerBg }}; border: 2px solid #191510; flex-shrink: 0;"></span>
+                        <span style="font-weight: 500; opacity: 0.8;">{{ b }}</span>
+                      </li>
+                    </sc-for>
+                  </ul>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <!-- Checkpoint quiz -->
+        <section id="sec-checkpoint" style="margin-bottom: 56px;">
+          <div style="border: 3px solid #191510; border-radius: 22px; background: #7B5CFF; color: #FAF3E7; padding: 30px 34px; box-shadow: 6px 6px 0 #191510; position: relative;">
+            <div style="position: absolute; top: -18px; left: 30px; background: #FFC933; color: #191510; border: 3px solid #191510; border-radius: 999px; padding: 6px 18px; font-weight: 800; font-size: 14px; box-shadow: 3px 3px 0 #191510; transform: rotate(-2deg);">✓ Checkpoint</div>
+            <h2 style="font-size: 26px; font-weight: 800; letter-spacing: -0.02em; margin: 10px 0 6px;">Quick check — did it stick?</h2>
+            <p style="font-size: 15px; opacity: 0.8; margin: 0 0 22px; font-weight: 500;">One question. Get it right to stamp this module's checkpoint.</p>
+            <div style="background: #FAF3E7; color: #191510; border: 3px solid #191510; border-radius: 16px; padding: 22px 24px;">
+              <div style="font-weight: 800; font-size: 17px; margin-bottom: 16px;">What separates a production prompt from a prototype prompt?</div>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <sc-for list="{{ quizOptions }}" as="q" hint-placeholder-count="3">
+                  <button onClick="{{ q.pick }}" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; border: 2px solid {{ q.border }}; background: {{ q.bg }}; font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer; transition: all 120ms; color: #191510;" style-hover="border-color: #191510; transform: translateX(4px);">
+                    <span style="width: 26px; height: 26px; border-radius: 999px; border: 2px solid #191510; background: {{ q.dotBg }}; display: flex; align-items: center; justify-content: center; font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; flex-shrink: 0;">{{ q.letter }}</span>
+                    {{ q.text }}
+                  </button>
+                </sc-for>
+              </div>
+              <sc-if value="{{ quizFeedback }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top: 16px; padding: 12px 16px; border-radius: 12px; border: 2px solid #191510; background: {{ quizFeedbackBg }}; font-weight: 700; font-size: 15px; animation: vcd-pop 250ms ease-out;">{{ quizFeedback }}</div>
+              </sc-if>
+            </div>
+          </div>
+        </section>
+
+        <!-- Exercise worksheet -->
+        <section id="sec-exercise" style="margin-bottom: 56px;">
+          <div style="border: 3px dashed #191510; border-radius: 22px; background: #FFF6DE; padding: 30px 34px; position: relative;">
+            <div style="position: absolute; top: -18px; left: 30px; background: #FF4D24; color: #FAF3E7; border: 3px solid #191510; border-radius: 999px; padding: 6px 18px; font-weight: 800; font-size: 14px; box-shadow: 3px 3px 0 #191510; transform: rotate(1.5deg);">✂ Hands-on</div>
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin: 10px 0 20px;">
+              <div>
+                <h2 style="font-size: 28px; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 8px;">The Precision Test</h2>
+                <p style="font-size: 15.5px; line-height: 1.6; margin: 0; font-weight: 500; max-width: 560px;">Set up one AI coding tool and run the experiment: two prompts, same component. Compare what precision vs. vagueness produces.</p>
+              </div>
+              <button onClick="{{ toggleExercise }}" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 999px; border: 2px solid #191510; background: {{ exerciseBtnBg }}; color: {{ exerciseBtnColor }}; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 2px 2px 0 #191510; flex-shrink: 0; transition: all 120ms;" style-hover="box-shadow: 0 0 0 #191510; transform: translate(2px, 2px);">{{ exerciseBtnLabel }}</button>
+            </div>
+            <ol style="list-style: none; padding: 0; margin: 0 0 24px; display: flex; flex-direction: column; gap: 12px;">
+              <sc-for list="{{ exerciseSteps }}" as="step" hint-placeholder-count="4">
+                <li style="display: flex; align-items: flex-start; gap: 14px; background: white; border: 2px solid #191510; border-radius: 14px; padding: 14px 18px; box-shadow: 3px 3px 0 #191510;">
+                  <span style="width: 30px; height: 30px; border-radius: 999px; background: #191510; color: #FAF3E7; display: flex; align-items: center; justify-content: center; font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; flex-shrink: 0;">{{ step.n }}</span>
+                  <span style="font-size: 15px; font-weight: 600; line-height: 1.55; padding-top: 3px;">{{ step.text }}</span>
+                </li>
+              </sc-for>
+            </ol>
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <a href="#" style="display: inline-flex; align-items: center; gap: 10px; padding: 13px 24px; background: #191510; color: #FAF3E7; border-radius: 999px; font-size: 15px; font-weight: 800; text-decoration: none; border: 3px solid #191510; box-shadow: 4px 4px 0 #FF4D24; transition: all 120ms;" style-hover="box-shadow: 0 0 0 #FF4D24; transform: translate(4px, 4px);">Open your Vibe Session Log →</a>
+              <span style="font-family: 'Caveat', cursive; font-size: 21px; font-weight: 700; color: #FF4D24; transform: rotate(-2deg); display: inline-block;">document everything!</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Deliverable -->
+        <section id="sec-deliverable" style="margin-bottom: 56px;">
+          <div style="border: 3px solid #191510; border-radius: 22px; background: #191510; color: #FAF3E7; padding: 30px 34px; display: flex; align-items: center; gap: 28px; box-shadow: 6px 6px 0 #FFC933;">
+            <div style="width: 84px; height: 84px; border-radius: 999px; background: #FFC933; border: 3px solid #FAF3E7; display: flex; align-items: center; justify-content: center; font-size: 40px; flex-shrink: 0; transform: rotate(-6deg);">🏆</div>
+            <div style="flex: 1;">
+              <div style="font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #FFC933; margin-bottom: 6px;">Module deliverable</div>
+              <h3 style="font-weight: 800; font-size: 24px; margin: 0 0 8px; letter-spacing: -0.02em;">Your Vibe Session Log</h3>
+              <p style="font-size: 15px; opacity: 0.75; line-height: 1.6; margin: 0; font-weight: 500; max-width: 620px;">A one-page document capturing what you asked for, what you got, what worked, what didn't, and what you want to learn. You'll come back to it at the end of the course to measure how far your prompting has come.</p>
+            </div>
+            <button onClick="{{ toggleDeliverable }}" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: 999px; border: 3px solid #FAF3E7; background: {{ deliverableBtnBg }}; color: {{ deliverableBtnColor }}; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 14px; cursor: pointer; flex-shrink: 0; transition: all 120ms;" style-hover="transform: scale(1.05);">{{ deliverableBtnLabel }}</button>
+          </div>
+        </section>
+
+        <!-- Prev / Next -->
+        <div style="display: flex; align-items: stretch; justify-content: space-between; gap: 20px; padding-top: 8px;">
+          <a href="redesign/Curriculum (Redesign).dc.html" style="display: flex; flex-direction: column; gap: 6px; padding: 20px 24px; border-radius: 18px; border: 3px solid #191510; background: white; text-decoration: none; color: #191510; box-shadow: 4px 4px 0 #191510; transition: all 120ms; flex: 0 1 40%;" style-hover="box-shadow: 0 0 0 #191510; transform: translate(4px, 4px);">
+          <span style="font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; opacity: 0.6;">← Back to</span>
+          <span style="font-weight: 800; font-size: 17px;">The Syllabus</span>
+          </a>
+          <a href="redesign/Module 01 (Redesign).dc.html" style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px; padding: 20px 24px; border-radius: 18px; border: 3px solid #191510; background: #FF4D24; color: #FAF3E7; text-decoration: none; box-shadow: 4px 4px 0 #191510; transition: all 120ms; flex: 0 1 40%; text-align: right;" style-hover="box-shadow: 0 0 0 #191510; transform: translate(4px, 4px);">
+            <span style="font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; opacity: 0.8;">Up next →</span>
+            <span style="font-weight: 800; font-size: 17px;">01 · Reading Code Like a Designer</span>
+          </a>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="background: #191510; color: #FAF3E7;">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 36px 28px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+      <span style="font-size: 14px; font-weight: 600;">Vibe Coding for Designers — ITX UX AI Workshop</span>
+      <div style="display: flex; align-items: center; gap: 22px; font-size: 14px;">
+        <a href="redesign/Curriculum (Redesign).dc.html" style="color: rgba(250,243,231,0.7); text-decoration: none;" style-hover="color: #FFC933;">Syllabus</a>
+        <a href="redesign/Resources (Redesign).dc.html" style="color: rgba(250,243,231,0.7); text-decoration: none;" style-hover="color: #FFC933;">Resources</a>
+        <a href="redesign/Glossary (Redesign).dc.html" style="color: rgba(250,243,231,0.7); text-decoration: none;" style-hover="color: #FFC933;">Glossary</a>
+        <span style="font-family: 'Space Mono', monospace; font-size: 12px; opacity: 0.5;">© 2026</span>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { done: [], quizPicked: null };
+
+  componentDidMount() {
+    try {
+      const raw = localStorage.getItem("vcd2-mod00-checkpoints");
+      if (raw) this.setState({ done: JSON.parse(raw) });
+    } catch (e) {}
+  }
+
+  toggleSec(id) {
+    this.setState((s) => {
+      const done = s.done.includes(id) ? s.done.filter((n) => n !== id) : [...s.done, id];
+      try { localStorage.setItem("vcd2-mod00-checkpoints", JSON.stringify(done)); } catch (e) {}
+      return { done };
+    });
+  }
+
+  renderVals() {
+    const done = this.state.done;
+    const has = (id) => done.includes(id);
+    const btn = (id, doneLabel, todoLabel) => ({
+      bg: has(id) ? "#1FA45B" : "white",
+      color: has(id) ? "#FAF3E7" : "#191510",
+      label: has(id) ? doneLabel : todoLabel,
+    });
+    const ob = btn("objectives", "✓ Done", "Mark done");
+    const cb = btn("concepts", "✓ Done", "Mark done");
+    const eb = btn("exercise", "✓ Done", "Mark done");
+    const db = btn("deliverable", "✓ Submitted", "Mark submitted");
+
+    // Checkpoint quiz
+    const picked = this.state.quizPicked;
+    const correct = "b";
+    const quizDone = picked === correct;
+    const sections = ["objectives", "concepts", "checkpoint", "exercise", "deliverable"];
+    const secDone = (id) => (id === "checkpoint" ? quizDone : has(id));
+    const doneCount = sections.filter(secDone).length;
+    const pct = Math.round((doneCount / sections.length) * 100);
+
+    const quizOptionsData = [
+      { letter: "A", key: "a", text: "Using a more expensive AI model" },
+      { letter: "B", key: "b", text: "Precise, spec-level input — exact values, states, and tokens" },
+      { letter: "C", key: "c", text: "Writing longer prompts with more adjectives" },
+    ];
+
+    return {
+      mapNodes: this.buildMap(),
+      tocItems: [
+        { id: "sec-objectives", label: "You'll learn to…", key: "objectives" },
+        { id: "sec-concepts", label: "Core concepts", key: "concepts" },
+        { id: "sec-checkpoint", label: "Checkpoint quiz", key: "checkpoint" },
+        { id: "sec-exercise", label: "Hands-on exercise", key: "exercise" },
+        { id: "sec-deliverable", label: "Deliverable", key: "deliverable" },
+      ].map((t) => {
+        const d = secDone(t.key);
+        return { ...t, done: d, dotBg: d ? "#1FA45B" : "white", bg: d ? "#ECFDF3" : "white", border: d ? "#1FA45B" : "rgba(25,21,16,0.2)", weight: d ? 800 : 600 };
+      }),
+      progressLabel: doneCount + "/5",
+      progressPct: pct + "%",
+      progressCheer: doneCount === 0 ? "let's go!" : doneCount < 3 ? "keep it up!" : doneCount < 5 ? "almost there!" : "module crushed ★",
+
+      toggleObjectives: () => this.toggleSec("objectives"),
+      objectivesBtnBg: ob.bg, objectivesBtnColor: ob.color, objectivesBtnLabel: ob.label,
+      toggleConcepts: () => this.toggleSec("concepts"),
+      conceptsBtnBg: cb.bg, conceptsBtnColor: cb.color, conceptsBtnLabel: cb.label,
+      toggleExercise: () => this.toggleSec("exercise"),
+      exerciseBtnBg: eb.bg, exerciseBtnColor: eb.color, exerciseBtnLabel: eb.label,
+      toggleDeliverable: () => this.toggleSec("deliverable"),
+      deliverableBtnBg: db.bg, deliverableBtnColor: db.color, deliverableBtnLabel: db.label,
+
+      quizOptions: quizOptionsData.map((q) => {
+        const isPicked = picked === q.key;
+        const isCorrectPick = isPicked && q.key === correct;
+        const isWrongPick = isPicked && q.key !== correct;
+        return {
+          ...q,
+          pick: () => this.setState({ quizPicked: q.key }),
+          bg: isCorrectPick ? "#D3F5E1" : isWrongPick ? "#FFDCD2" : "white",
+          border: isCorrectPick ? "#1FA45B" : isWrongPick ? "#FF4D24" : "rgba(25,21,16,0.25)",
+          dotBg: isCorrectPick ? "#1FA45B" : isWrongPick ? "#FF4D24" : "white",
+        };
+      }),
+      quizFeedback: picked === null ? "" : quizDone ? "✓ Exactly — the spec is the contract. Checkpoint stamped!" : "Not quite — think about what stops AI from guessing. Try again!",
+      quizFeedbackBg: quizDone ? "#D3F5E1" : "#FFDCD2",
+
+      objectives: [
+        "Understand what vibe coding is and how it differs from AI prototyping",
+        "Recognize why your design vocabulary is a precision prompting advantage",
+        "Tour the AI coding tool landscape and choose your first tool",
+        "Run a precision vs. vague prompt comparison and document the results",
+        "Start your Vibe Session Log — the artifact you'll build throughout this course",
+      ].map((t, i) => ({ n: "0" + (i + 1), text: t, color: ["#2545D3", "#7B5CFF", "#1FA45B", "#FF4D24", "#FFC933"][i] })),
+
+      concepts: [
+        {
+          id: "c-what", n: "01", title: "What Vibe Coding Actually Is", headerBg: "#2545D3", headerText: "#FAF3E7",
+          body: "Vibe coding is not about describing what you want and hoping AI produces it. That works for throwaway prototypes; it fails for production. Vibe coding means bringing your design precision to every AI prompt — the same precision you already apply in Figma.",
+          bullets: [
+            '"Card with 24px padding, 12px border-radius, 18px/600 title, 14px/400 secondary text at 60% opacity" → AI builds exactly that',
+            '"Make a nice card" → AI guesses, and guessing is how you end up with 6 revision cycles',
+            "Production-grade AI-assisted development, not throwaway prototypes",
+            'The shift: from "I describe, someone else builds" to "I describe, I build"',
+          ],
+        },
+        {
+          id: "c-vocab", n: "02", title: "Your Design Vocabulary Is Your Superpower", headerBg: "#7B5CFF", headerText: "#FAF3E7",
+          body: "Non-designers struggle with AI coding tools because they can't describe what they want precisely. You've spent your whole career doing exactly that. Every Figma decision — padding value, spacing scale, color token, type style — is a direct AI instruction waiting to be written down.",
+          bullets: [
+            "Design intent converts to specific values AI can execute without guessing",
+            "Your spec-writing practice is already most of what a good AI prompt requires",
+            "Engineers read your specs; AI reads your specs — the audience changes, the skill does not",
+            "The difference between 2 iterations and 12 is usually spec precision",
+          ],
+        },
+        {
+          id: "c-tools", n: "03", title: "The AI Coding Tool Landscape", headerBg: "#1FA45B", headerText: "#FAF3E7",
+          body: "This course is stack agnostic — the SDD workflow works with any AI coding tool. The same spec produces equivalent output across all of them. The difference is how much control you have over the surrounding code.",
+          bullets: [
+            "Cursor — code editor with AI built in; maximum control, existing codebases",
+            "Lovable — full-stack app builder; starting new projects from scratch",
+            "v0 by Vercel — component generator; isolated UI components",
+            "Bolt — full-stack with one-click deploy; prototypes that become real products",
+            "Replit — browser-based; learning without any local setup",
+          ],
+        },
+        {
+          id: "c-production", n: "04", title: "Production-Grade vs. Prototype", headerBg: "#FF4D24", headerText: "#FAF3E7",
+          body: 'Most vibe coding tutorials stop at "it kind of works." This course builds to "it ships." The difference is not the AI tool — it is the quality of the input. A prototype needs to look right in a screenshot; a production component needs to handle every state, breakpoint, edge case, and accessibility requirement.',
+          bullets: [
+            "Prototype: looks right in one state; production: works in all states",
+            "Prototype: hardcoded values; production: token references that cascade",
+            "Prototype: no keyboard navigation; production: full WCAG 2.1 AA compliance",
+            "SDD closes this gap by making the spec the contract, not the screenshot",
+          ],
+        },
+      ],
+
+      exerciseSteps: [
+        "Choose one AI tool from the landscape above and create a free account",
+        "Precise prompt: 'Build a card with 24px padding, 12px radius, an 18px bold title, a 14px subtitle at 60% opacity, and a 1px neutral-200 border'",
+        "Vague prompt: 'Make me a nice card component'",
+        "Screenshot both outputs side by side and note what AI had to guess in the vague version",
+      ].map((t, i) => ({ n: i + 1, text: t })),
+    };
+  }
+
+  buildMap() {
+    const groups = [
+      { color: "#F0E5D3", text: "#191510", mods: ["00"] },
+      { color: "#2545D3", text: "#FAF3E7", mods: ["01", "02", "03", "04", "05"] },
+      { color: "#7B5CFF", text: "#FAF3E7", mods: ["06"] },
+      { color: "#1FA45B", text: "#FAF3E7", mods: ["07", "08", "09"] },
+      { color: "#FF4D24", text: "#FAF3E7", mods: ["10", "11"] },
+    ];
+    const nodes = [];
+    groups.forEach((g, gi) => {
+      g.mods.forEach((num, mi) => {
+        const isCurrent = num === "00";
+        nodes.push({
+          label: num,
+          isCurrent,
+          title: "Module " + num,
+          href: num === "00" ? "redesign/Module (Redesign).dc.html" : num === "01" ? "redesign/Module 01 (Redesign).dc.html" : "redesign/Module " + num + " (Redesign).dc.html",
+          size: isCurrent ? "44px" : "34px",
+          fontSize: isCurrent ? "13px" : "11px",
+          bg: isCurrent ? "#FF4D24" : g.color,
+          color: isCurrent ? "#FAF3E7" : g.text,
+          anim: isCurrent ? "vcd-pulse-ring 2s ease-out infinite" : "none",
+          showDash: true,
+          dashColor: "rgba(25,21,16,0.25)",
+        });
+      });
+    });
+    nodes.push({ label: "★", isCurrent: false, title: "Capstone Project", href: "redesign/Capstone (Redesign).dc.html", size: "34px", fontSize: "13px", bg: "#191510", color: "#FFC933", anim: "none", showDash: false, dashColor: "transparent" });
+    return nodes;
+  }
+}
+</script>
+</body>
+</html>

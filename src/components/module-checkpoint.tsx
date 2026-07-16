@@ -22,7 +22,9 @@ interface Props {
   };
   deliverable: { title: string; description: string };
   quiz?: QuizQuestion[];
-  prev: NavItem | null;
+  /** The lesson screen this checkpoint belongs to — always reachable for review. */
+  lesson: NavItem;
+  /** The module unlocked by passing this checkpoint. */
   next: NavItem | null;
 }
 
@@ -34,14 +36,14 @@ function CheckSvg({ className = "" }: { className?: string }) {
   );
 }
 
-export function ModuleCompletion({
+export function ModuleCheckpoint({
   slug,
   accentBg,
   accentText,
   exercise,
   deliverable,
   quiz,
-  prev,
+  lesson,
   next,
 }: Props) {
   const review = useReviewMode();
@@ -243,7 +245,7 @@ export function ModuleCompletion({
             </span>
 
             <div className="flex items-center gap-3 mt-2.5 mb-2 flex-wrap">
-              <h2 className="text-[28px] font-extrabold">Check your understanding</h2>
+              <h2 className="text-[28px] font-extrabold">Check what you&rsquo;ve learned</h2>
               <span
                 className={`font-mono text-[11px] font-bold uppercase tracking-wide border-[2px] border-[#191510] rounded-full px-2.5 py-1 ${
                   quizPassed ? "bg-[#1FA45B] text-white" : "bg-[#FAF3E7] text-[#191510]"
@@ -253,7 +255,7 @@ export function ModuleCompletion({
               </span>
             </div>
             <p className="text-[15.5px] leading-[1.6] font-medium mb-6">
-              Answer every question correctly to complete the module. Pick the best answer — you can retry.
+              Answer every question correctly to unlock the next module. Pick the best answer — you can retry as many times as you like.
             </p>
 
             <div className="flex flex-col gap-6">
@@ -308,7 +310,14 @@ export function ModuleCompletion({
                     </div>
                     {answered && !isCorrect && (
                       <p className="pl-8 mt-1.5 text-[13px] font-semibold text-[#FF4D24]">
-                        Not quite — try another answer.
+                        Not quite — reread{" "}
+                        <Link
+                          href={`/modules/${lesson.slug}`}
+                          className="underline underline-offset-2 hover:opacity-70"
+                        >
+                          {lesson.title}
+                        </Link>{" "}
+                        and try again.
                       </p>
                     )}
                   </div>
@@ -319,16 +328,18 @@ export function ModuleCompletion({
         </section>
       )}
 
-      {/* ─── Completion + gated Next ─── */}
+      {/* ─── Result ─── */}
       {hydrated && (
-        <div className="mb-6">
+        <div className="mb-8">
           {complete ? (
             <div className="flex items-center gap-3 border-[3px] border-[#191510] rounded-[18px] bg-[#E7F8EF] px-5 py-4 shadow-[4px_4px_0_#1FA45B]">
               <span className="text-[22px]">🎉</span>
               <div>
-                <p className="font-extrabold text-[16px]">Module complete!</p>
+                <p className="font-extrabold text-[16px]">Checkpoint passed!</p>
                 <p className="text-[13.5px] font-medium opacity-70">
-                  Exercise done and quiz passed — you can move on.
+                  {next
+                    ? `Exercise done and quiz passed — ${next.title} is unlocked.`
+                    : "Exercise done and quiz passed — you're clear to move on."}
                 </p>
               </div>
             </div>
@@ -336,38 +347,40 @@ export function ModuleCompletion({
             <div className="flex items-start gap-3 border-[3px] border-dashed border-[#191510] rounded-[18px] bg-[#FFF6DE] px-5 py-4">
               <span className="text-[20px] leading-none mt-0.5">🔒</span>
               <div>
-                <p className="font-extrabold text-[15px]">Finish this module to unlock the next one</p>
+                <p className="font-extrabold text-[15px]">
+                  Pass this checkpoint to unlock the next module
+                </p>
                 <ul className="mt-1 text-[13.5px] font-medium opacity-80 flex flex-col gap-0.5">
                   <li>{exerciseDone ? "✓" : "•"} Complete the hands-on exercise (click every step)</li>
                   {hasQuiz && (
                     <li>{quizPassed ? "✓" : "•"} Answer every quiz question correctly</li>
                   )}
                 </ul>
+                <p className="mt-2 text-[13.5px] font-medium opacity-80">
+                  Stuck? Go back and review{" "}
+                  <Link
+                    href={`/modules/${lesson.slug}`}
+                    className="font-bold underline underline-offset-2 hover:opacity-70"
+                  >
+                    {lesson.title}
+                  </Link>{" "}
+                  — your answers are saved.
+                </p>
               </div>
             </div>
           )}
         </div>
       )}
 
-      {/* ─── Prev / Next Navigation ─── */}
+      {/* ─── Back to lesson / gated Next ─── */}
       <nav className="flex justify-between gap-4 pt-8 border-t-[3px] border-[#191510]">
-        {prev ? (
-          <Link
-            href={`/modules/${prev.slug}`}
-            className="flex flex-col gap-1 p-4 border-[3px] border-[#191510] rounded-[18px] shadow-[3px_3px_0_#191510] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all duration-[120ms] max-w-[45%]"
-          >
-            <span className="font-mono text-xs opacity-50">&larr; Previous</span>
-            <span className="text-sm font-semibold truncate">{prev.title}</span>
-          </Link>
-        ) : (
-          <Link
-            href="/curriculum"
-            className="flex flex-col gap-1 p-4 border-[3px] border-[#191510] rounded-[18px] shadow-[3px_3px_0_#191510] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all duration-[120ms]"
-          >
-            <span className="font-mono text-xs opacity-50">&larr; Back to</span>
-            <span className="text-sm font-semibold">Curriculum</span>
-          </Link>
-        )}
+        <Link
+          href={`/modules/${lesson.slug}`}
+          className="flex flex-col gap-1 p-4 border-[3px] border-[#191510] rounded-[18px] shadow-[3px_3px_0_#191510] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all duration-[120ms] max-w-[45%]"
+        >
+          <span className="font-mono text-xs opacity-50">&larr; Review the lesson</span>
+          <span className="text-sm font-semibold truncate">{lesson.title}</span>
+        </Link>
 
         {next &&
           (complete ? (
@@ -375,7 +388,7 @@ export function ModuleCompletion({
               href={`/modules/${next.slug}`}
               className="flex flex-col gap-1 p-4 border-[3px] border-[#191510] rounded-[18px] shadow-[3px_3px_0_var(--brand)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all duration-[120ms] text-right max-w-[45%] ml-auto bg-white"
             >
-              <span className="font-mono text-xs opacity-50">Next &rarr;</span>
+              <span className="font-mono text-xs opacity-50">Next module &rarr;</span>
               <span className="text-sm font-semibold truncate">{next.title}</span>
             </Link>
           ) : (

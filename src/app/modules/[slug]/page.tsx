@@ -6,10 +6,9 @@ import { ModuleStepper } from "@/components/module-stepper";
 import { CodeBlock } from "@/components/code-block";
 import { CardCompareTabs } from "@/components/card-compare-tabs";
 import { FigmaPanel } from "@/components/figma-panels";
-import { ModuleCompletion } from "@/components/module-completion";
 import { ModuleLockGate } from "@/components/module-lock-gate";
 import { TabGroupWrapper } from "@/components/tab-group-wrapper";
-import { allModules, capstoneModule, phases } from "@/lib/course-data";
+import { allModules, capstoneModule } from "@/lib/course-data";
 import { moduleContent } from "@/lib/module-content";
 import { CapstoneEval } from "@/components/capstone-eval";
 
@@ -261,8 +260,7 @@ export default async function ModulePage({ params }: Props) {
         num: String(i + 1).padStart(2, "0"),
       })),
     },
-    { heading: "Hands-On Exercise", id: "hands-on-exercise" },
-    { heading: "Deliverable", id: "deliverable" },
+    { heading: "Checkpoint", id: "checkpoint-cta" },
   ];
 
   return (
@@ -703,17 +701,62 @@ export default async function ModulePage({ params }: Props) {
               </div>
             </section>
 
-            {/* ─── Hands-On Exercise + Deliverable + Quiz + gated Next ─── */}
-            <ModuleCompletion
-              slug={slug}
-              accentBg={pStyle.bg}
-              accentText={pStyle.text}
-              exercise={content.exercise}
-              deliverable={content.deliverable}
-              quiz={content.quiz}
-              prev={prev ? { slug: prev.slug, title: prev.title } : null}
-              next={next ? { slug: next.slug, title: next.title } : null}
-            />
+            {/* ─── Hand-off to the Checkpoint screen ─── */}
+            <section id="checkpoint-cta" className="mb-12 scroll-mt-24">
+              <div className="border-[3px] border-[#191510] rounded-[22px] bg-white p-[30px_34px] shadow-[5px_5px_0_#191510] relative">
+                <span
+                  className="absolute top-[-18px] left-[30px] border-[3px] border-[#191510] rounded-full px-[18px] py-1.5 font-extrabold text-sm shadow-[3px_3px_0_#191510] -rotate-[1.5deg]"
+                  style={{ backgroundColor: pStyle.bg, color: pStyle.text }}
+                >
+                  &#127937; Up next
+                </span>
+
+                <h2 className="text-[28px] font-extrabold mt-2.5 mb-2">
+                  Ready to put it into practice?
+                </h2>
+                <p className="text-[15.5px] leading-[1.6] font-medium max-w-[560px] mb-6">
+                  The checkpoint has this module&rsquo;s hands-on exercise and a short check on
+                  what you&rsquo;ve learned. Pass both to unlock{" "}
+                  {next ? <strong>{next.title}</strong> : "the rest of the course"}. You can come
+                  back and reread this lesson whenever you want.
+                </p>
+
+                <div className="flex items-center gap-4 flex-wrap">
+                  <Link
+                    href={`/modules/${slug}/checkpoint`}
+                    className="inline-flex items-center gap-2 px-7 py-3.5 bg-foreground text-background rounded-full text-[15px] font-extrabold shadow-[4px_4px_0_var(--brand)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
+                  >
+                    Go to the checkpoint &rarr;
+                  </Link>
+                  <span className="font-[family-name:var(--font-caveat)] text-[20px] font-bold text-[var(--brand)] -rotate-2">
+                    exercise + quiz
+                  </span>
+                </div>
+              </div>
+            </section>
+
+            {/* ─── Prev / Checkpoint Navigation ─── */}
+            <nav className="flex justify-between gap-4 pt-8 border-t-[3px] border-[#191510]">
+              <Link
+                href={prev ? `/modules/${prev.slug}` : "/curriculum"}
+                className="flex flex-col gap-1 p-4 border-[3px] border-[#191510] rounded-[18px] shadow-[3px_3px_0_#191510] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all duration-[120ms] max-w-[45%]"
+              >
+                <span className="font-mono text-xs opacity-50">
+                  &larr; {prev ? "Previous" : "Back to"}
+                </span>
+                <span className="text-sm font-semibold truncate">
+                  {prev ? prev.title : "Curriculum"}
+                </span>
+              </Link>
+
+              <Link
+                href={`/modules/${slug}/checkpoint`}
+                className="flex flex-col gap-1 p-4 border-[3px] border-[#191510] rounded-[18px] shadow-[3px_3px_0_var(--brand)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all duration-[120ms] text-right max-w-[45%] ml-auto bg-white"
+              >
+                <span className="font-mono text-xs opacity-50">Next &rarr;</span>
+                <span className="text-sm font-semibold truncate">Checkpoint</span>
+              </Link>
+            </nav>
           </div>
         </div>
       </main>

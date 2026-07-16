@@ -9,7 +9,10 @@ import { useReviewMode } from "@/lib/use-review-mode";
  * Client-side soft gate. If the current module isn't unlocked yet (its
  * predecessor hasn't been completed), it covers the page with a "finish the
  * previous module first" interstitial. Completion lives in localStorage
- * (`vcd-complete-${slug}`), written by ModuleCompletion.
+ * (`vcd-complete-${slug}`), written by ModuleCheckpoint.
+ *
+ * Guards both screens of a module — the lesson and its checkpoint — since both
+ * routes render it with the same slug.
  */
 export function ModuleLockGate({ slug }: { slug: string }) {
   const review = useReviewMode();
@@ -92,12 +95,20 @@ export function ModuleLockGate({ slug }: { slug: string }) {
 
         <div className="flex flex-col gap-2.5">
           {prev && (
-            <Link
-              href={`/modules/${prev.slug}`}
-              className="inline-flex items-center justify-center gap-2 rounded-full border-[3px] border-[#191510] bg-foreground px-6 py-3 text-[15px] font-extrabold text-background shadow-[4px_4px_0_var(--brand)] transition-all duration-[120ms] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none"
-            >
-              Go to {prev.title} &rarr;
-            </Link>
+            <>
+              <Link
+                href={`/modules/${prev.slug}/checkpoint`}
+                className="inline-flex items-center justify-center gap-2 rounded-full border-[3px] border-[#191510] bg-foreground px-6 py-3 text-[15px] font-extrabold text-background shadow-[4px_4px_0_var(--brand)] transition-all duration-[120ms] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none"
+              >
+                Go to its checkpoint &rarr;
+              </Link>
+              <Link
+                href={`/modules/${prev.slug}`}
+                className="inline-flex items-center justify-center gap-2 rounded-full border-[2px] border-[#191510] px-6 py-3 text-[15px] font-bold transition-colors hover:bg-[#191510] hover:text-background"
+              >
+                Review the lesson first
+              </Link>
+            </>
           )}
           <Link
             href="/curriculum"

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&amp;family=Space+Mono:wght@400;700&amp;family=Caveat:wght@500;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #FAF3E7; color: #191510; font-family: 'Bricolage Grotesque', sans-serif; -webkit-font-smoothing: antialiased; }
+    @keyframes vcd-pop { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+  </style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; flex-direction: column;">
+
+  <!-- Nav -->
+  <header style="position: sticky; top: 0; z-index: 50; background: #FAF3E7; border-bottom: 3px solid #191510;">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 0 28px; height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+      <a href="redesign/Home (Redesign).dc.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+        <div style="width: 38px; height: 38px; border-radius: 999px; background: #FFC933; border: 3px solid #191510; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0 #191510;">
+          <svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M3 4L7 10L11 4" stroke="#191510" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </div>
+        <span style="font-weight: 800; font-size: 17px; letter-spacing: -0.02em; color: #191510;">Vibe Coding <span style="font-family: 'Caveat', cursive; font-size: 19px; font-weight: 700; color: #FF4D24;">for designers</span></span>
+      </a>
+      <nav style="display: flex; align-items: center; gap: 10px;">
+        <a href="redesign/Home (Redesign).dc.html" style="padding: 8px 16px; border-radius: 999px; font-size: 15px; font-weight: 600; color: #191510; text-decoration: none; border: 2px solid transparent;" style-hover="border-color: #191510;">Home</a>
+        <a href="redesign/Curriculum (Redesign).dc.html" style="padding: 8px 16px; border-radius: 999px; font-size: 15px; font-weight: 600; color: #191510; text-decoration: none; border: 2px solid transparent;" style-hover="border-color: #191510;">Syllabus</a>
+        <a href="redesign/Resources (Redesign).dc.html" style="padding: 8px 16px; border-radius: 999px; font-size: 15px; font-weight: 600; color: #191510; text-decoration: none; border: 2px solid transparent;" style-hover="border-color: #191510;">Resources</a>
+        <a href="#" style="padding: 8px 16px; border-radius: 999px; font-size: 15px; font-weight: 700; background: #191510; color: #FAF3E7; text-decoration: none; border: 2px solid #191510;">Glossary</a>
+        <a href="redesign/Curriculum (Redesign).dc.html" style="display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; border-radius: 999px; font-size: 15px; font-weight: 800; background: #FF4D24; color: #FAF3E7; text-decoration: none; border: 2px solid #191510; box-shadow: 3px 3px 0 #191510; transition: all 120ms;" style-hover="box-shadow: 0 0 0 #191510; transform: translate(3px, 3px);">Start learning →</a>
+      </nav>
+    </div>
+  </header>
+
+  <div style="flex: 1; max-width: 1240px; margin: 0 auto; padding: 56px 28px 88px; width: 100%; box-sizing: border-box;">
+
+    <!-- Header -->
+    <div style="margin-bottom: 40px;">
+      <div style="display: inline-block; font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; background: #2545D3; color: #FAF3E7; border: 2px solid #191510; border-radius: 8px; padding: 5px 12px; box-shadow: 3px 3px 0 #191510; transform: rotate(-1.5deg); margin-bottom: 24px;">Speak the language</div>
+      <h1 style="font-size: clamp(56px, 7vw, 88px); font-weight: 800; letter-spacing: -0.04em; line-height: 0.95; margin: 0 0 16px;">The Glossary<span style="color: #FF4D24;">.</span></h1>
+      <p style="font-size: 19px; line-height: 1.6; max-width: 560px; margin: 0 0 28px; font-weight: 500;">Every term the course throws at you, translated into designer. <span style="font-family: 'Caveat', cursive; font-size: 24px; font-weight: 700; color: #1FA45B;">most of these you already know ✓</span></p>
+
+      <!-- Filter -->
+      <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 10px; background: white; border: 3px solid #191510; border-radius: 999px; padding: 10px 20px; box-shadow: 3px 3px 0 #191510; width: 340px;">
+          <svg width="15" height="15" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="#191510" stroke-width="2"></circle><path d="M9.5 9.5L13 13" stroke="#191510" stroke-width="2" stroke-linecap="round"></path></svg>
+          <input value="{{ query }}" onChange="{{ setQuery }}" placeholder="Filter terms…" style="flex: 1; border: none; outline: none; background: transparent; font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 600; color: #191510;">
+        </div>
+        <sc-for list="{{ catChips }}" as="chip" hint-placeholder-count="4">
+          <button onClick="{{ chip.pick }}" style="padding: 9px 18px; border-radius: 999px; border: 2px solid #191510; background: {{ chip.bg }}; color: {{ chip.color }}; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; box-shadow: 2px 2px 0 #191510; transition: all 120ms;" style-hover="box-shadow: 0 0 0 #191510; transform: translate(2px, 2px);">{{ chip.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- Terms grid -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;">
+      <sc-for list="{{ terms }}" as="t" hint-placeholder-count="9">
+        <div style="border: 3px solid #191510; border-radius: 20px; background: white; padding: 22px; box-shadow: 4px 4px 0 #191510; transition: transform 140ms; display: flex; flex-direction: column; gap: 10px;" style-hover="transform: translateY(-4px) rotate(-0.5deg);">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+            <span style="width: 38px; height: 38px; border-radius: 12px; border: 3px solid #191510; background: {{ t.color }}; color: {{ t.letterColor }}; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; transform: rotate(-4deg);">{{ t.letter }}</span>
+            <span style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; border: 2px solid #191510; border-radius: 6px; padding: 3px 9px; background: {{ t.color }}; color: {{ t.letterColor }};">{{ t.cat }}</span>
+          </div>
+          <div style="font-weight: 800; font-size: 19px; letter-spacing: -0.01em;">{{ t.term }}</div>
+          <p style="font-size: 14px; line-height: 1.55; margin: 0; opacity: 0.75; font-weight: 500; flex: 1;">{{ t.def }}</p>
+          <div style="font-family: 'Caveat', cursive; font-size: 18px; font-weight: 700; color: #7B5CFF;">{{ t.figma }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align: center; padding: 60px 20px;">
+        <div style="font-size: 44px; margin-bottom: 12px;">🤷</div>
+        <div style="font-weight: 800; font-size: 22px; margin-bottom: 6px;">Nothing matches "{{ query }}"</div>
+        <p style="font-size: 15px; opacity: 0.6; font-weight: 500; margin: 0;">Try another word — or request it as a new glossary entry.</p>
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- Footer -->
+  <footer style="background: #191510; color: #FAF3E7;">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 36px 28px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+      <span style="font-size: 14px; font-weight: 600;">Vibe Coding for Designers — ITX UX AI Workshop</span>
+      <div style="display: flex; align-items: center; gap: 22px; font-size: 14px;">
+        <a href="redesign/Curriculum (Redesign).dc.html" style="color: rgba(250,243,231,0.7); text-decoration: none;" style-hover="color: #FFC933;">Syllabus</a>
+        <a href="redesign/Resources (Redesign).dc.html" style="color: rgba(250,243,231,0.7); text-decoration: none;" style-hover="color: #FFC933;">Resources</a>
+        <span style="font-family: 'Space Mono', monospace; font-size: 12px; opacity: 0.5;">© 2026</span>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { query: "", cat: "All" };
+
+  renderVals() {
+    const cats = [
+      { label: "All", color: "#191510", text: "#FAF3E7" },
+      { label: "Code", color: "#2545D3", text: "#FAF3E7" },
+      { label: "Specs", color: "#7B5CFF", text: "#FAF3E7" },
+      { label: "Tools", color: "#1FA45B", text: "#FAF3E7" },
+      { label: "Shipping", color: "#FF4D24", text: "#FAF3E7" },
+    ];
+    const catColor = {
+      Code: { color: "#2545D3", letterColor: "#FAF3E7" },
+      Specs: { color: "#B9A5FF", letterColor: "#191510" },
+      Tools: { color: "#6FE3A5", letterColor: "#191510" },
+      Shipping: { color: "#FF4D24", letterColor: "#FAF3E7" },
+    };
+    const allTerms = [
+      { term: "Vibe coding", cat: "Specs", def: "AI-assisted development where your design precision is the input. You describe with spec-level exactness; AI implements.", figma: "= designing with words" },
+      { term: "SDD", cat: "Specs", def: "Spec-Driven Development. The spec is the contract — not the screenshot, not the vibe.", figma: "= your source of truth" },
+      { term: "Component Spec", cat: "Specs", def: "A structured description of one reusable element: props, variants, states, and tokens.", figma: "= component description, formalized" },
+      { term: "design.md", cat: "Specs", def: "The canonical design document in the repo — tokens, type scale, spacing, component inventory.", figma: "= your Figma cover page, but executable" },
+      { term: "CLAUDE.md", cat: "Tools", def: "A context file that primes every Claude Code session with your project's design rules.", figma: "= onboarding doc for your AI" },
+      { term: "Design token", cat: "Code", def: "A named design decision (color, spacing, radius) referenced instead of hardcoded.", figma: "= Figma variables" },
+      { term: "CSS variable", cat: "Code", def: "A token in code form: --brand: #FF4D24. Change it once, it cascades everywhere.", figma: "= a variable, in the stylesheet" },
+      { term: "Flexbox", cat: "Code", def: "CSS layout where children flow in a row or column with gap and alignment.", figma: "= auto-layout" },
+      { term: "Prop", cat: "Code", def: "An input a component accepts to change how it renders — label, size, variant.", figma: "= component properties" },
+      { term: "State", cat: "Code", def: "Data a component remembers that changes what it shows — hover, open, loading, error.", figma: "= interactive variants" },
+      { term: "Storybook", cat: "Tools", def: "A workshop for components in isolation — review every state without running the app.", figma: "= a living component library page" },
+      { term: "Claude Code", cat: "Tools", def: "The AI coding agent this course pairs you with. Reads your specs, writes the implementation.", figma: "= your engineering partner" },
+      { term: "Branch", cat: "Shipping", def: "A parallel copy of the codebase where you work without touching production.", figma: "= a Figma branch, literally" },
+      { term: "Pull request", cat: "Shipping", def: "A proposal to merge your branch — where code review happens before shipping.", figma: "= design crit for code" },
+      { term: "Deploy", cat: "Shipping", def: "Publishing code to production. With Vercel, every merge can go live automatically.", figma: "= hitting publish" },
+      { term: "Git", cat: "Shipping", def: "The version-control system that tracks every change to the codebase — who, what, when, and why.", figma: "= version history, with superpowers" },
+      { term: "Commit", cat: "Shipping", def: "A saved snapshot of your changes with a message describing them. Small, frequent commits tell a story.", figma: "= naming a version save" },
+      { term: "Merge", cat: "Shipping", def: "Combining one branch's changes into another — usually your work landing in main after review.", figma: "= merging a Figma branch" },
+      { term: "Spec", cat: "Specs", def: "A precise, structured description of what to build — exact values, states, and behaviour. The unit of work in SDD.", figma: "= redlines that write code" },
+      { term: "Interaction Spec", cat: "Specs", def: "A spec for motion: triggers, transitions, timing, and easing, written so AI can implement them exactly.", figma: "= prototype settings, in words" },
+      { term: "Acceptance criteria", cat: "Specs", def: "The checklist at the bottom of a spec that defines 'done' — testable statements, not vibes.", figma: "= the definition of done" },
+      { term: "Terminal", cat: "Tools", def: "The text window where you type commands to your computer. Claude Code lives here — it's friendlier than it looks.", figma: "= the command line, your new canvas" },
+      { term: "CLI", cat: "Tools", def: "Command-Line Interface — any tool you drive by typing commands instead of clicking buttons.", figma: "= keyboard shortcuts, as an app" },
+      { term: "npm package", cat: "Tools", def: "A reusable chunk of code you install into a project — a component library, an icon set, a utility.", figma: "= a community library you can install" },
+      { term: "Lint", cat: "Code", def: "An automatic code-style checker that flags inconsistencies and errors before they ship.", figma: "= a design-system audit, automated" },
+      { term: "Repository", cat: "Shipping", def: "The project's home: all the code, its history, and its branches, usually hosted on GitHub.", figma: "= the team project file" },
+      { term: "Markdown", cat: "Code", def: "The plain-text formatting language of design.md, CLAUDE.md, and your specs. Headings with #, lists with -.", figma: "= rich text you can version" },
+      { term: "Component library", cat: "Tools", def: "The shared toolkit of built, tested UI components a product team composes screens from.", figma: "= your published Figma library, in code" },
+      { term: "Breakpoint", cat: "Code", def: "A viewport width where the layout changes — the code version of designing at multiple frame sizes.", figma: "= desktop / tablet / mobile frames" },
+      { term: "Semantic HTML", cat: "Code", def: "Using the right element for the job — button, nav, header — so browsers and screen readers understand the page.", figma: "= naming your layers properly" },
+      { term: "Accessibility (a11y)", cat: "Code", def: "Making the UI work for everyone: contrast, keyboard navigation, focus states, screen-reader labels.", figma: "= WCAG contrast checks, and then some" },
+      { term: "Token parity", cat: "Specs", def: "Keeping Figma variables and CSS variables identical, so design and code never drift apart.", figma: "= one source of truth, two mediums" },
+    ];
+
+    const q = this.state.query.toLowerCase();
+    const filtered = allTerms.filter((t) =>
+      (this.state.cat === "All" || t.cat === this.state.cat) &&
+      (q === "" || t.term.toLowerCase().includes(q) || t.def.toLowerCase().includes(q))
+    );
+
+    return {
+      query: this.state.query,
+      setQuery: (e) => this.setState({ query: e.target.value }),
+      noResults: filtered.length === 0,
+      catChips: cats.map((c) => ({
+        label: c.label,
+        bg: this.state.cat === c.label ? c.color : "white",
+        color: this.state.cat === c.label ? c.text : "#191510",
+        pick: () => this.setState({ cat: c.label }),
+      })),
+      terms: filtered.map((t) => ({
+        ...t,
+        letter: t.term[0].toUpperCase(),
+        color: catColor[t.cat].color,
+        letterColor: catColor[t.cat].letterColor,
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>

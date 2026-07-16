@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: oklch(0.98 0.004 80); color: oklch(0.1 0 0); font-family: 'Geist', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  </style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; flex-direction: column;">
+
+  <!-- Site nav -->
+  <header style="position: sticky; top: 0; z-index: 50; width: 100%; border-bottom: 1px solid oklch(0.88 0.008 80); background: oklch(0.98 0.004 80 / 0.95); backdrop-filter: blur(4px);">
+    <div style="max-width: 1152px; margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between;">
+      <a href="current/Home (Current).dc.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+        <div style="width: 28px; height: 28px; border-radius: 8px; background: oklch(0.1 0 0); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 4L7 10L11 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </div>
+        <span style="font-weight: 600; font-size: 14px; letter-spacing: -0.01em; color: oklch(0.1 0 0);">Vibe Coding<span style="color: oklch(0.5 0.01 60); font-weight: 400;"> for Designers</span></span>
+      </a>
+      <nav style="display: flex; align-items: center; gap: 4px;">
+        <a href="current/Home (Current).dc.html" style="padding: 6px 12px; border-radius: 6px; font-size: 14px; font-weight: 500; color: oklch(0.5 0.01 60); text-decoration: none;" style-hover="color: oklch(0.1 0 0); background: oklch(0.95 0.006 80);">Home</a>
+        <a href="current/Curriculum (Current).dc.html" style="padding: 6px 12px; border-radius: 6px; font-size: 14px; font-weight: 500; background: oklch(0.1 0 0); color: oklch(0.98 0 0); text-decoration: none;">Curriculum</a>
+        <div style="width: 1px; height: 16px; background: oklch(0.88 0.008 80); margin: 0 4px;"></div>
+        <a href="current/Curriculum (Current).dc.html" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 14px; font-weight: 500; background: oklch(0.63 0.16 52); color: white; text-decoration: none;" style-hover="opacity: 0.9;">Start Learning</a>
+      </nav>
+    </div>
+  </header>
+
+  <div style="flex: 1; max-width: 1152px; margin: 0 auto; padding: 32px 24px 80px; width: 100%; box-sizing: border-box;">
+    <div style="display: grid; grid-template-columns: 220px 1fr; gap: 40px;">
+
+      <!-- Module sidebar -->
+      <aside>
+        <div style="position: sticky; top: 80px;">
+          <div style="font-size: 12px; font-family: 'Geist Mono', monospace; color: oklch(0.5 0.01 60); text-transform: uppercase; letter-spacing: 0.1em; padding: 0 8px; margin-bottom: 16px;">On This Page</div>
+          <nav style="display: flex; flex-direction: column; gap: 2px;">
+            <sc-for list="{{ sidebarSections }}" as="sec" hint-placeholder-count="4">
+              <div>
+                <a href="#{{ sec.id }}" style="display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 6px; font-size: 14px; color: {{ sec.color }}; background: {{ sec.bg }}; font-weight: {{ sec.weight }}; text-decoration: none;" style-hover="color: oklch(0.1 0 0); background: oklch(0.95 0.006 80 / 0.6);">
+                  <span style="flex-shrink: 0; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;">
+                    <span style="width: 6px; height: 6px; border-radius: 99px; background: {{ sec.dotColor }};"></span>
+                  </span>
+                  <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ sec.heading }}</span>
+                </a>
+                <sc-if value="{{ sec.hasSubs }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding-left: 24px; display: flex; flex-direction: column; gap: 2px; margin-top: 2px;">
+                    <sc-for list="{{ sec.subs }}" as="sub" hint-placeholder-count="2">
+                      <a href="#{{ sub.id }}" style="display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 6px; font-size: 12px; color: oklch(0.5 0.01 60); text-decoration: none;" style-hover="color: oklch(0.1 0 0); background: oklch(0.95 0.006 80 / 0.6);">
+                        <span style="flex-shrink: 0; width: 12px; height: 12px; display: flex; align-items: center; justify-content: center;">
+                          <span style="width: 4px; height: 4px; border-radius: 99px; background: oklch(0.88 0.008 80 / 0.6);"></span>
+                        </span>
+                        <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ sub.label }}</span>
+                      </a>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </nav>
+          <div style="margin-top: 24px; padding: 0 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+              <span style="font-size: 12px; color: oklch(0.5 0.01 60); font-family: 'Geist Mono', monospace;">Progress</span>
+              <span style="font-size: 12px; color: oklch(0.5 0.01 60); font-family: 'Geist Mono', monospace; font-variant-numeric: tabular-nums;">{{ progressLabel }}</span>
+            </div>
+            <div style="height: 4px; border-radius: 99px; background: oklch(0.88 0.008 80); overflow: hidden;">
+              <div style="height: 100%; border-radius: 99px; background: oklch(0.1 0 0); transition: width 500ms; width: {{ progressPct }};"></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main style="min-width: 0;" data-screen-label="Module 00">
+        <header style="padding-bottom: 32px; margin-bottom: 32px; border-bottom: 1px solid oklch(0.88 0.008 80);">
+          <!-- Stepper -->
+          <div style="margin-bottom: 24px; overflow-x: auto;">
+            <div style="display: flex; align-items: flex-start; min-width: max-content; padding: 4px;">
+              <sc-for list="{{ stepperPhases }}" as="ph" hint-placeholder-count="6">
+                <div style="display: flex; align-items: flex-start;">
+                  <sc-if value="{{ ph.showConnector }}" hint-placeholder-val="{{ false }}">
+                    <div style="display: flex; flex-direction: column; gap: 6px; margin: 0 6px;">
+                      <div style="height: 14px;"></div>
+                      <div style="display: flex; align-items: center; height: 28px;">
+                        <div style="width: 16px; height: 2px; background: oklch(0.88 0.008 80 / 0.5); border-radius: 99px; flex-shrink: 0;"></div>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
+                    <div style="padding: 0 4px; font-size: 9px; font-family: 'Geist Mono', monospace; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; color: {{ ph.labelColor }}; font-weight: {{ ph.labelWeight }};">{{ ph.label }}</div>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                      <sc-for list="{{ ph.steps }}" as="st" hint-placeholder-count="1">
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                          <a href="current/Module (Current).dc.html" title="{{ st.title }}" style="width: 28px; height: 28px; border-radius: 99px; border: 2px solid {{ st.borderColor }}; background: {{ st.bg }}; color: {{ st.color }}; display: flex; align-items: center; justify-content: center; font-family: 'Geist Mono', monospace; font-size: 9px; font-weight: 700; text-decoration: none; box-sizing: border-box; box-shadow: {{ st.shadow }};">{{ st.num }}</a>
+                          <sc-if value="{{ st.showDash }}" hint-placeholder-val="{{ false }}">
+                            <div style="width: 12px; height: 2px; border-radius: 99px; background: oklch(0.88 0.008 80); flex-shrink: 0;"></div>
+                          </sc-if>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <span style="padding: 3px 10px; border: 1px solid #e7e5e4; background: #fafaf9; color: #44403c; border-radius: 8px; font-family: 'Geist Mono', monospace; font-size: 12px;">Phase 0</span>
+            <span style="padding: 3px 10px; border: 1px solid oklch(0.88 0.008 80); color: oklch(0.5 0.01 60); border-radius: 8px; font-family: 'Geist Mono', monospace; font-size: 12px;">Module 00</span>
+            <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: oklch(0.5 0.01 60); background: oklch(0.95 0.006 80); border-radius: 99px; padding: 4px 12px; font-family: 'Geist Mono', monospace; margin-left: auto;">⏱ 2–3 hrs</span>
+          </div>
+
+          <h1 style="font-size: 36px; font-weight: 700; letter-spacing: -0.025em; margin: 0 0 12px;">Welcome to Vibe Coding</h1>
+          <p style="color: oklch(0.5 0.01 60); line-height: 1.65; max-width: 672px; margin: 0;">Understand what vibe coding is, why it changes the designer's role, and set up your working environment.</p>
+        </header>
+
+        <!-- Learning Objectives -->
+        <section id="learning-objectives" style="margin-bottom: 40px;">
+          <h2 style="font-size: 18px; font-weight: 700; margin: 0 0 16px;">Learning Objectives</h2>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
+            <sc-for list="{{ objectives }}" as="obj" hint-placeholder-count="5">
+              <li style="display: flex; align-items: flex-start; gap: 12px;">
+                <div style="margin-top: 2px; width: 20px; height: 20px; border-radius: 99px; background: #a8a29e; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 700; color: white;">{{ obj.n }}</div>
+                <span style="font-size: 14px; color: oklch(0.1 0 0); line-height: 1.6;">{{ obj.text }}</span>
+              </li>
+            </sc-for>
+          </ul>
+        </section>
+
+        <div style="height: 1px; background: oklch(0.88 0.008 80); margin: 32px 0;"></div>
+
+        <!-- Core Concepts -->
+        <section id="core-concepts" style="margin-bottom: 40px;">
+          <h2 style="font-size: 18px; font-weight: 700; margin: 0 0 24px;">Core Concepts</h2>
+          <div style="display: flex; flex-direction: column; gap: 40px;">
+            <sc-for list="{{ concepts }}" as="c" hint-placeholder-count="4">
+              <div id="{{ c.id }}">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                  <div style="width: 20px; height: 20px; border-radius: 99px; background: #a8a29e; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <span style="font-family: 'Geist Mono', monospace; font-size: 9px; font-weight: 700; color: white;">{{ c.n }}</span>
+                  </div>
+                  <h3 style="font-weight: 600; font-size: 16px; margin: 0;">{{ c.title }}</h3>
+                </div>
+                <p style="font-size: 14px; color: oklch(0.5 0.01 60); line-height: 1.65; margin: 0 0 16px; padding-left: 28px;">{{ c.body }}</p>
+                <ul style="list-style: none; padding: 0 0 0 28px; margin: 0 0 16px; display: flex; flex-direction: column; gap: 8px;">
+                  <sc-for list="{{ c.bullets }}" as="b" hint-placeholder-count="4">
+                    <li style="display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: oklch(0.5 0.01 60);">
+                      <div style="margin-top: 6px; width: 6px; height: 6px; border-radius: 99px; background: #a8a29e; opacity: 0.7; flex-shrink: 0;"></div>
+                      <span style="line-height: 1.6;">{{ b }}</span>
+                    </li>
+                  </sc-for>
+                </ul>
+                <sc-if value="{{ c.showDivider }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding-left: 28px; margin-top: 24px;"><div style="height: 1px; background: oklch(0.88 0.008 80 / 0.5);"></div></div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <div style="height: 1px; background: oklch(0.88 0.008 80); margin: 32px 0;"></div>
+
+        <!-- Hands-on Exercise -->
+        <section id="hands-on-exercise" style="margin-bottom: 40px;">
+          <div style="border-radius: 12px; border: 1px solid oklch(0.88 0.008 80 / 0.6); border-left: 4px solid #a8a29e; background: #fafaf9; overflow: hidden;">
+            <div style="padding: 24px;">
+              <div style="font-family: 'Geist Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: oklch(0.5 0.01 60); margin-bottom: 8px;">Hands-On Exercise</div>
+              <h2 style="font-size: 18px; font-weight: 700; margin: 0 0 8px;">The Precision Test</h2>
+              <p style="font-size: 14px; color: oklch(0.5 0.01 60); line-height: 1.6; margin: 0 0 20px;">Set up one AI coding tool and run this experiment. Two prompts, same component — compare what precision versus vagueness produces.</p>
+              <ol style="list-style: none; padding: 0; margin: 0 0 24px; display: flex; flex-direction: column; gap: 12px;">
+                <sc-for list="{{ exerciseSteps }}" as="step" hint-placeholder-count="4">
+                  <li style="display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="width: 24px; height: 24px; border-radius: 99px; background: #a8a29e; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 700; color: white;">{{ step.n }}</div>
+                    <span style="font-size: 14px; color: oklch(0.1 0 0); line-height: 1.6; padding-top: 2px;">{{ step.text }}</span>
+                  </li>
+                </sc-for>
+              </ol>
+              <div style="padding-top: 16px; border-top: 1px solid oklch(0.88 0.008 80 / 0.4);">
+                <div style="font-size: 12px; color: oklch(0.5 0.01 60); font-family: 'Geist Mono', monospace; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Document in</div>
+                <a href="#" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: oklch(0.1 0 0); color: oklch(0.98 0.004 80); border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none;" style-hover="opacity: 0.9;">Your Vibe Session Log →</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Deliverable -->
+        <section id="deliverable" style="margin-bottom: 40px;">
+          <div style="border-radius: 12px; border: 1px solid oklch(0.88 0.008 80); padding: 24px;">
+            <div style="display: flex; align-items: flex-start; gap: 16px;">
+              <div style="width: 40px; height: 40px; border-radius: 8px; background: #fafaf9; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid oklch(0.88 0.008 80);">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="color: #57534e;"><path d="M9 2L11.09 7.26L17 8.27L13 12.14L14.18 18L9 15.27L3.82 18L5 12.14L1 8.27L6.91 7.26L9 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <div style="font-family: 'Geist Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: oklch(0.5 0.01 60); margin-bottom: 4px;">Module Deliverable</div>
+                <h3 style="font-weight: 700; font-size: 16px; margin: 0 0 8px;">Your Vibe Session Log</h3>
+                <p style="font-size: 14px; color: oklch(0.5 0.01 60); line-height: 1.6; margin: 0;">A one-page document capturing what you asked for, what you got, what worked, what did not, and what you want to learn. You will return to this log at the end of the course to measure how far your prompting has come.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Prev / Next -->
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 32px; border-top: 1px solid oklch(0.88 0.008 80);">
+          <a href="current/Curriculum (Current).dc.html" style="display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 8px; border: 1px solid oklch(0.88 0.008 80); text-decoration: none;" style-hover="border-color: oklch(0.1 0 0); box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+            <span style="font-size: 12px; color: oklch(0.5 0.01 60); font-family: 'Geist Mono', monospace;">← Back to</span>
+            <span style="font-size: 14px; font-weight: 500; color: oklch(0.1 0 0);">Curriculum</span>
+          </a>
+          <a href="current/Module (Current).dc.html" style="display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 8px; border: 1px solid oklch(0.88 0.008 80); text-decoration: none; text-align: right; max-width: 45%; margin-left: auto;" style-hover="border-color: oklch(0.1 0 0); box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+            <span style="font-size: 12px; color: oklch(0.5 0.01 60); font-family: 'Geist Mono', monospace;">Next →</span>
+            <span style="font-size: 14px; font-weight: 500; color: oklch(0.1 0 0); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Reading Code Like a Designer</span>
+          </a>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="border-top: 1px solid oklch(0.88 0.008 80);">
+    <div style="max-width: 1152px; margin: 0 auto; padding: 32px 24px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: oklch(0.5 0.01 60);">
+      <a href="current/Curriculum (Current).dc.html" style="color: oklch(0.5 0.01 60); text-decoration: none;" style-hover="color: oklch(0.1 0 0);">← Back to Curriculum</a>
+      <span>© 2026 Vibe Coding for Designers</span>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { activeId: "learning-objectives", visited: ["learning-objectives"] };
+
+  componentDidMount() {
+    const ids = ["learning-objectives", "core-concepts", "what-vibe-coding-is", "designer-prompting-advantage", "ai-tool-landscape", "production-vs-prototype", "hands-on-exercise", "deliverable"];
+    this._onScroll = () => {
+      let current = ids[0];
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top < 200) current = id;
+      }
+      if (current !== this.state.activeId) {
+        this.setState((s) => ({
+          activeId: current,
+          visited: s.visited.includes(current) ? s.visited : [...s.visited, current],
+        }));
+      }
+    };
+    window.addEventListener("scroll", this._onScroll, { passive: true });
+  }
+  componentWillUnmount() { window.removeEventListener("scroll", this._onScroll); }
+
+  renderVals() {
+    const muted = "oklch(0.5 0.01 60)";
+    const fg = "oklch(0.1 0 0)";
+    const conceptSubs = [
+      { label: "What Vibe Coding Actually Is", id: "what-vibe-coding-is" },
+      { label: "Your Design Vocabulary Is Your Prompting Superpower", id: "designer-prompting-advantage" },
+      { label: "The AI Coding Tool Landscape", id: "ai-tool-landscape" },
+      { label: "Production-Grade vs. Prototype AI Development", id: "production-vs-prototype" },
+    ];
+    const sections = [
+      { heading: "Learning Objectives", id: "learning-objectives" },
+      { heading: "Core Concepts", id: "core-concepts", subs: conceptSubs },
+      { heading: "Hands-On Exercise", id: "hands-on-exercise" },
+      { heading: "Deliverable", id: "deliverable" },
+    ];
+    const topLevelActive = ["what-vibe-coding-is", "designer-prompting-advantage", "ai-tool-landscape", "production-vs-prototype"].includes(this.state.activeId) ? "core-concepts" : this.state.activeId;
+
+    const sidebarSections = sections.map((s) => {
+      const active = s.id === topLevelActive;
+      const visited = this.state.visited.includes(s.id) && !active;
+      return {
+        ...s,
+        hasSubs: !!s.subs,
+        subs: s.subs || [],
+        color: active ? fg : muted,
+        bg: active ? "oklch(0.95 0.006 80)" : "transparent",
+        weight: active ? 500 : 400,
+        dotColor: visited ? "oklch(0.7 0.01 60)" : active ? "#a8a29e" : "oklch(0.88 0.008 80)",
+      };
+    });
+
+    // Stepper — current module is 00 (first)
+    const phaseCfg = {
+      phase0: { inactiveBg: "#f5f5f4", inactiveBorder: "#a8a29e", inactiveText: "#57534e", activeBg: "#44403c", activeBorder: "#44403c", ring: "#a8a29e" },
+      phase1: { inactiveBg: "#f1f5f9", inactiveBorder: "#94a3b8", inactiveText: "#475569" },
+      phase2: { inactiveBg: "#f5f3ff", inactiveBorder: "#a78bfa", inactiveText: "#7c3aed" },
+      phase3: { inactiveBg: "#ecfdf5", inactiveBorder: "#10b981", inactiveText: "#047857" },
+      phase4: { inactiveBg: "#fffbeb", inactiveBorder: "#fbbf24", inactiveText: "#b45309" },
+    };
+    const phasesData = [
+      { id: "phase0", label: "Foundation", mods: [{ num: "00", title: "Welcome to Vibe Coding" }] },
+      { id: "phase1", label: "Read the Stack", mods: [{ num: "01" }, { num: "02" }, { num: "03" }, { num: "04" }, { num: "05" }] },
+      { id: "phase2", label: "Write Specs", mods: [{ num: "06" }] },
+      { id: "phase3", label: "Build with AI", mods: [{ num: "07" }, { num: "08" }, { num: "09" }] },
+      { id: "phase4", label: "Ship It", mods: [{ num: "10" }, { num: "11" }] },
+    ];
+    const stepperPhases = phasesData.map((p, pi) => {
+      const cfg = phaseCfg[p.id];
+      const isPhaseActive = pi === 0;
+      return {
+        label: p.label,
+        showConnector: pi > 0,
+        labelColor: isPhaseActive ? fg : "oklch(0.5 0.01 60 / 0.6)",
+        labelWeight: isPhaseActive ? 700 : 400,
+        steps: p.mods.map((m, mi) => {
+          const isActive = pi === 0 && mi === 0;
+          return {
+            num: m.num,
+            title: m.title || "Module " + m.num,
+            bg: isActive ? cfg.activeBg : cfg.inactiveBg,
+            borderColor: isActive ? cfg.activeBorder : cfg.inactiveBorder,
+            color: isActive ? "#ffffff" : cfg.inactiveText,
+            shadow: isActive ? "0 0 0 2px oklch(0.98 0.004 80), 0 0 0 4px " + cfg.ring + ", 0 4px 6px rgba(0,0,0,0.1)" : "none",
+            showDash: mi < p.mods.length - 1,
+          };
+        }),
+      };
+    });
+    stepperPhases.push({
+      label: "Capstone",
+      showConnector: true,
+      labelColor: "oklch(0.5 0.01 60 / 0.6)",
+      labelWeight: 400,
+      steps: [{ num: "★", title: "Capstone Project", bg: "oklch(0.63 0.16 52 / 0.05)", borderColor: "oklch(0.63 0.16 52 / 0.5)", color: "oklch(0.63 0.16 52)", shadow: "none", showDash: false }],
+    });
+
+    return {
+      sidebarSections,
+      stepperPhases,
+      progressLabel: this.state.visited.length + "/4",
+      progressPct: Math.min(100, (this.state.visited.filter((v) => sections.some((s) => s.id === v)).length / 4) * 100) + "%",
+      objectives: [
+        "Understand what vibe coding is and how it differs from AI prototyping",
+        "Recognize why your design vocabulary is a precision prompting advantage",
+        "Tour the AI coding tool landscape and choose your first tool",
+        "Run a precision vs. vague prompt comparison and document the results",
+        "Start your Vibe Session Log — the artifact you will build throughout this course",
+      ].map((t, i) => ({ n: i + 1, text: t })),
+      concepts: [
+        {
+          id: "what-vibe-coding-is", n: "01", title: "What Vibe Coding Actually Is", showDivider: true,
+          body: "Vibe coding is not about describing what you want and hoping AI produces it. That approach works for throwaway prototypes. It fails for production. Instead, vibe coding means bringing your design precision to every AI prompt — the same precision you already apply in Figma.",
+          bullets: [
+            '"Card with 24px padding, 12px border-radius, 18px/600 title, 14px/400 secondary text at 60% opacity" → AI builds exactly that',
+            '"Make a nice card" → AI guesses, and guessing is how you end up with 6 revision cycles',
+            "Production-grade AI-assisted development, not throwaway prototypes",
+            'The shift: from "I describe, someone else builds" to "I describe, I build"',
+          ],
+        },
+        {
+          id: "designer-prompting-advantage", n: "02", title: "Your Design Vocabulary Is Your Prompting Superpower", showDivider: true,
+          body: "Non-designers struggle with AI coding tools because they cannot describe what they want with enough precision. You have spent your entire career doing exactly that. Every Figma decision you've made — padding value, spacing scale, color token, typography style — is a direct AI instruction waiting to be written down.",
+          bullets: [
+            "Design intent converts to specific values AI can execute without guessing",
+            "Your spec-writing practice is already most of what a good AI prompt requires",
+            "Engineers read your specs; AI reads your specs — the audience changes, the skill does not",
+            "The difference between 2 iterations and 12 iterations is usually spec precision",
+          ],
+        },
+        {
+          id: "ai-tool-landscape", n: "03", title: "The AI Coding Tool Landscape", showDivider: true,
+          body: "This course is stack agnostic — the SDD workflow works with any AI coding tool. The same spec produces equivalent output across all of them. The difference is how much control you have over the surrounding code.",
+          bullets: [
+            "Cursor — code editor with AI built in; best for maximum control and existing codebases",
+            "Lovable — full-stack app builder; best for starting new projects from scratch",
+            "v0 by Vercel — component generator; best for isolated UI components",
+            "Bolt — full-stack with one-click deploy; best for prototypes that become real products",
+            "Replit — browser-based; best for learning without any local setup",
+          ],
+        },
+        {
+          id: "production-vs-prototype", n: "04", title: "Production-Grade vs. Prototype AI Development", showDivider: false,
+          body: 'Most vibe coding tutorials stop at "it kind of works." This course builds to "it ships." The difference is not the AI tool — it is the quality of the input you give it. A prototype needs to look right in a screenshot. A production component needs to handle every state, every breakpoint, every edge case, and every accessibility requirement.',
+          bullets: [
+            "Prototype: looks right in one specific state; production: works in all states",
+            "Prototype: hardcoded values; production: token references that cascade",
+            "Prototype: no keyboard navigation; production: full WCAG 2.1 AA compliance",
+            "SDD closes this gap by making the spec the contract, not the screenshot",
+          ],
+        },
+      ],
+      exerciseSteps: [
+        "Choose one AI tool from the landscape above and create a free account",
+        "Precise prompt: 'Build a card component with 24px padding, 12px border-radius, an 18px bold title, a 14px regular subtitle at 60% opacity, and a 1px border using neutral-200'",
+        "Vague prompt: 'Make me a nice card component'",
+        "Screenshot both outputs side by side and note what AI had to guess in the vague version",
+      ].map((t, i) => ({ n: i + 1, text: t })),
+    };
+  }
+}
+</script>
+</body>
+</html>

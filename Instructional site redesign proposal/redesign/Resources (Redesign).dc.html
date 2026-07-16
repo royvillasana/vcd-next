@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&amp;family=Space+Mono:wght@400;700&amp;family=Caveat:wght@500;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #FAF3E7; color: #191510; font-family: 'Bricolage Grotesque', sans-serif; -webkit-font-smoothing: antialiased; }
+    @keyframes vcd-pop { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+  </style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; flex-direction: column;">
+
+  <!-- Nav -->
+  <header style="position: sticky; top: 0; z-index: 50; background: #FAF3E7; border-bottom: 3px solid #191510;">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 0 28px; height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+      <a href="redesign/Home (Redesign).dc.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+        <div style="width: 38px; height: 38px; border-radius: 999px; background: #FFC933; border: 3px solid #191510; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0 #191510;">
+          <svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M3 4L7 10L11 4" stroke="#191510" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </div>
+        <span style="font-weight: 800; font-size: 17px; letter-spacing: -0.02em; color: #191510;">Vibe Coding <span style="font-family: 'Caveat', cursive; font-size: 19px; font-weight: 700; color: #FF4D24;">for designers</span></span>
+      </a>
+      <nav style="display: flex; align-items: center; gap: 10px;">
+        <a href="redesign/Home (Redesign).dc.html" style="padding: 8px 16px; border-radius: 999px; font-size: 15px; font-weight: 600; color: #191510; text-decoration: none; border: 2px solid transparent;" style-hover="border-color: #191510;">Home</a>
+        <a href="redesign/Curriculum (Redesign).dc.html" style="padding: 8px 16px; border-radius: 999px; font-size: 15px; font-weight: 600; color: #191510; text-decoration: none; border: 2px solid transparent;" style-hover="border-color: #191510;">Syllabus</a>
+        <a href="#" style="padding: 8px 16px; border-radius: 999px; font-size: 15px; font-weight: 700; background: #191510; color: #FAF3E7; text-decoration: none; border: 2px solid #191510;">Resources</a>
+        <a href="redesign/Glossary (Redesign).dc.html" style="padding: 8px 16px; border-radius: 999px; font-size: 15px; font-weight: 600; color: #191510; text-decoration: none; border: 2px solid transparent;" style-hover="border-color: #191510;">Glossary</a>
+        <a href="redesign/Curriculum (Redesign).dc.html" style="display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px; border-radius: 999px; font-size: 15px; font-weight: 800; background: #FF4D24; color: #FAF3E7; text-decoration: none; border: 2px solid #191510; box-shadow: 3px 3px 0 #191510; transition: all 120ms;" style-hover="box-shadow: 0 0 0 #191510; transform: translate(3px, 3px);">Start learning →</a>
+      </nav>
+    </div>
+  </header>
+
+  <div style="flex: 1; max-width: 1240px; margin: 0 auto; padding: 56px 28px 88px; width: 100%; box-sizing: border-box;">
+
+    <!-- Header -->
+    <div style="margin-bottom: 48px; position: relative;">
+      <div style="display: inline-block; font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; background: #1FA45B; color: #FAF3E7; border: 2px solid #191510; border-radius: 8px; padding: 5px 12px; box-shadow: 3px 3px 0 #191510; transform: rotate(-1.5deg); margin-bottom: 24px;">Grab &amp; go · all free</div>
+      <h1 style="font-size: clamp(56px, 7vw, 88px); font-weight: 800; letter-spacing: -0.04em; line-height: 0.95; margin: 0 0 16px;">The Toolbox<span style="color: #FF4D24;">.</span></h1>
+      <p style="font-size: 19px; line-height: 1.6; max-width: 560px; margin: 0; font-weight: 500;">Every template, starter file, and checklist from the course — ready to copy into your own projects. <span style="font-family: 'Caveat', cursive; font-size: 24px; font-weight: 700; color: #2545D3;">steal these, seriously ↓</span></p>
+    </div>
+
+    <!-- Groups -->
+    <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+      <section style="margin-bottom: 52px;">
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 22px;">
+          <span style="width: 40px; height: 40px; border-radius: 12px; border: 3px solid #191510; background: {{ g.color }}; display: flex; align-items: center; justify-content: center; font-size: 19px; box-shadow: 3px 3px 0 #191510; transform: rotate(-3deg);">{{ g.icon }}</span>
+          <h2 style="font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin: 0;">{{ g.title }}</h2>
+          <span style="font-family: 'Caveat', cursive; font-size: 21px; font-weight: 700; color: #7B5CFF;">{{ g.note }}</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;">
+          <sc-for list="{{ g.items }}" as="r" hint-placeholder-count="3">
+            <div style="border: 3px solid #191510; border-radius: 20px; background: white; padding: 22px; box-shadow: 4px 4px 0 #191510; display: flex; flex-direction: column; gap: 12px; transition: transform 140ms;" style-hover="transform: translateY(-4px) rotate(-0.5deg);">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                <span style="font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; border: 2px solid #191510; border-radius: 6px; padding: 3px 9px; background: {{ g.color }};">{{ r.type }}</span>
+                <span style="font-family: 'Space Mono', monospace; font-size: 11px; opacity: 0.5;">{{ r.meta }}</span>
+              </div>
+              <div style="font-weight: 800; font-size: 18px; letter-spacing: -0.01em;">{{ r.title }}</div>
+              <p style="font-size: 14px; line-height: 1.55; margin: 0; opacity: 0.7; font-weight: 500; flex: 1;">{{ r.description }}</p>
+              <a href="#" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; background: #191510; color: #FAF3E7; border-radius: 999px; font-size: 14px; font-weight: 800; text-decoration: none; border: 2px solid #191510; box-shadow: 3px 3px 0 {{ g.shadow }}; transition: all 120ms; align-self: flex-start;" style-hover="box-shadow: 0 0 0 #191510; transform: translate(3px, 3px);">{{ r.cta }} ⤓</a>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </sc-for>
+
+    <!-- Request band -->
+    <div style="border: 3px dashed #191510; border-radius: 22px; background: #FFF6DE; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+      <div>
+        <div style="font-weight: 800; font-size: 22px; letter-spacing: -0.015em; margin-bottom: 4px;">Missing something?</div>
+        <p style="font-size: 15px; margin: 0; font-weight: 500; opacity: 0.7;">Tell the workshop crew what template or checklist would help and we'll add it to the box.</p>
+      </div>
+      <a href="#" style="display: inline-flex; align-items: center; gap: 8px; padding: 13px 24px; background: #7B5CFF; color: #FAF3E7; border-radius: 999px; font-size: 15px; font-weight: 800; text-decoration: none; border: 3px solid #191510; box-shadow: 4px 4px 0 #191510; transition: all 120ms; white-space: nowrap;" style-hover="box-shadow: 0 0 0 #191510; transform: translate(4px, 4px);">Request a resource →</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="background: #191510; color: #FAF3E7;">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 36px 28px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+      <span style="font-size: 14px; font-weight: 600;">Vibe Coding for Designers — ITX UX AI Workshop</span>
+      <div style="display: flex; align-items: center; gap: 22px; font-size: 14px;">
+        <a href="redesign/Curriculum (Redesign).dc.html" style="color: rgba(250,243,231,0.7); text-decoration: none;" style-hover="color: #FFC933;">Syllabus</a>
+        <a href="redesign/Glossary (Redesign).dc.html" style="color: rgba(250,243,231,0.7); text-decoration: none;" style-hover="color: #FFC933;">Glossary</a>
+        <span style="font-family: 'Space Mono', monospace; font-size: 12px; opacity: 0.5;">© 2026</span>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      groups: [
+        {
+          title: "Spec templates", icon: "📐", color: "#FFC933", shadow: "#FF4D24", note: "the big three",
+          items: [
+            { type: ".MD", meta: "Module 06", title: "Component Spec template", description: "Props, variants, states, and token references — the fill-in-the-blanks structure AI can act on.", cta: "Download" },
+            { type: ".MD", meta: "Module 06", title: "Interaction Spec template", description: "Triggers, transitions, timing, and easing. Describe motion so precisely it builds itself.", cta: "Download" },
+            { type: ".MD", meta: "Module 06", title: "Page / Feature Spec template", description: "Layout zones, content structure, and system behaviour for whole pages and features.", cta: "Download" },
+          ],
+        },
+        {
+          title: "AI context starters", icon: "🤖", color: "#B9A5FF", shadow: "#7B5CFF", note: "prime every session",
+          items: [
+            { type: ".MD", meta: "Module 04", title: "design.md starter", description: "The canonical design document — tokens, type scale, spacing, and component inventory, pre-structured.", cta: "Download" },
+            { type: ".MD", meta: "Module 05", title: "CLAUDE.md starter", description: "The context file that loads your design rules into every Claude Code session automatically.", cta: "Download" },
+            { type: ".MD", meta: "Module 00", title: "Vibe Session Log template", description: "One page per session: what you asked, what you got, what you'd change. Your course-long artifact.", cta: "Download" },
+          ],
+        },
+        {
+          title: "Checklists", icon: "✅", color: "#6FE3A5", shadow: "#1FA45B", note: "print & pin these",
+          items: [
+            { type: ".PDF", meta: "Module 00", title: "Prompt precision checklist", description: "Ten questions to run before you hit enter. If AI has to guess, the prompt isn't done.", cta: "Download" },
+            { type: ".PDF", meta: "Module 10", title: "PR review checklist for designers", description: "What to look for in a pull request when you're the design eye in the room.", cta: "Download" },
+            { type: ".PDF", meta: "Module 11", title: "Pre-deploy QA checklist", description: "States, breakpoints, keyboard nav, and tokens — verify before it ships, not after.", cta: "Download" },
+          ],
+        },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
