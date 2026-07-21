@@ -47,7 +47,6 @@ export const phases: Phase[] = [
         phase: "Phase 0",
         phaseId: "phase0",
         overview: "New to engineering tools? Start here: what the Terminal is, how to open it on Mac and Windows, first-time setup, and troubleshooting.",
-        optional: true,
       },
       {
         id: "m00",
