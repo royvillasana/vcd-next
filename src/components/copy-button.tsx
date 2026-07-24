@@ -10,7 +10,23 @@ export function CopyButton({ code }: Props) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
-    await navigator.clipboard.writeText(code);
+    try {
+      await navigator.clipboard.writeText(code);
+    } catch {
+      // Fallback for insecure contexts / older browsers without the async API
+      const ta = document.createElement("textarea");
+      ta.value = code;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy");
+      } catch {
+        // give up silently — the text is still manually selectable
+      }
+      document.body.removeChild(ta);
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
@@ -19,7 +35,7 @@ export function CopyButton({ code }: Props) {
     <button
       onClick={handleCopy}
       aria-label={copied ? "Copied!" : "Copy code"}
-      className="opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center gap-1.5 text-[10px] font-mono text-white/40 hover:text-white/80 select-none"
+      className="flex items-center gap-1.5 rounded-md border border-white/15 bg-white/5 px-2 py-1 text-[10px] font-mono text-white/60 transition-colors duration-150 hover:border-white/30 hover:bg-white/10 hover:text-white select-none"
     >
       {copied ? (
         <>

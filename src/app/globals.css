@@ -197,6 +197,17 @@
   }
 }
 
+/* Make all content selectable/copyable. WebKit (Safari, every iOS browser)
+   resolves the default `user-select: auto` to non-selectable on many nested
+   and flex elements — so prompts, code blocks, and card text can't be copied.
+   Force text selection explicitly at the root; interactive chrome opts back
+   out with the `.select-none` utility, which wins as a direct override. */
+html {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+}
+
 /* Text selection — brand orange with white text (unlayered so it wins) */
 ::selection,
 *::selection {
