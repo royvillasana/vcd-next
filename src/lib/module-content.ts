@@ -4773,7 +4773,7 @@ Read @design.md before writing any component code.
       {
         id: "context-hierarchy",
         title: "The Three-Layer Context Hierarchy",
-        body: "Context for AI sessions works in layers. CLAUDE.md sets the permanent project rules; design.md documents the design system; the spec or prompt describes what to build right now. Each layer has a different scope, lifecycle, and owner.",
+        body: "Context for AI sessions works in layers. CLAUDE.md sets the permanent project rules; design.md documents the design system; the spec or prompt describes what to build right now. Each layer has a different scope, lifecycle, and owner. (This module only builds the first layer — CLAUDE.md. You'll create design.md in Module 04's workflow and your first specs in Module 06, so don't worry if those files don't exist yet.)",
         bullets: [
           "Layer 1 — CLAUDE.md: permanent project rules — stack, conventions, what to always/never do. Loads every session automatically.",
           "Layer 2 — design.md: living design system documentation — tokens, components, patterns. Referenced from CLAUDE.md: 'Read design.md before writing any component code.'",
@@ -5087,6 +5087,7 @@ Ready. Open Claude Code in this directory and run:
 
   "module-10": {
     objectives: [
+      "Install the SDD-DE toolkit (npx @royvillasana/sdd-de) so the spec skills are available in Claude Code",
       "Understand the three spec types — Component, Interaction, and Page — and when to use each",
       "Write a complete Component Spec using the SDD-DE template that AI can execute without asking questions",
       "Write an Interaction Spec that captures triggers, timing, easing, and edge cases",
@@ -5095,6 +5096,49 @@ Ready. Open Claude Code in this directory and run:
       "Red-line your spec for AI intent, not just for engineer measurements",
     ],
     concepts: [
+      {
+        id: "install-sdd-de",
+        title: "Step 0 — Install the SDD-DE Toolkit",
+        body: "The skills this module runs on — /enrich-brief and /generate-artifacts — come from SDD-DE (Spec-Driven Development for Design Engineers), an npm package that installs the SDD workflow into your project. Run one command from your project root before anything else in this module. You don't clone a repo or configure anything — npx downloads the latest version and writes the skill files, spec templates, and a CLAUDE.md that points Claude Code to them.",
+        callout: {
+          tone: "warn",
+          title: "Do this first",
+          body: "The /enrich-brief and /generate-artifacts slash commands do not exist until you install SDD-DE. If you already ran this in an earlier module (you'll see a .sdd-de/ folder and a CLAUDE.md in your root), skip ahead. Requires Node.js 18+ — check with node --version.",
+        },
+        codeBlocks: [
+          {
+            lang: "bash",
+            label: "install SDD-DE",
+            content: "npx @royvillasana/sdd-de",
+          },
+          {
+            lang: "text",
+            label: "expected output",
+            content: `SDD-DE — Spec-Driven Development for Design Engineers
+──────────────────────────────────────────────────────
+  ✓  skills installed  →  .sdd-de/ai-specs/skills/
+  ✓  docs installed    →  .sdd-de/docs/
+  ✓  CLAUDE.md created →  ./CLAUDE.md
+  ✓  .gitignore updated
+
+Ready. Open Claude Code in this directory and run /enrich-brief.`,
+          },
+        ],
+        bullets: [
+          ".sdd-de/ai-specs/skills/ — the 5 skill folders, each a SKILL.md Claude Code reads when you type its slash command",
+          ".sdd-de/docs/ — the spec templates (Component, Interaction, Page) and standards docs you'll fill in this module",
+          "CLAUDE.md — written to your project root so Claude Code knows where every skill and template lives",
+          ".gitignore — .sdd-de/ is added automatically if a .gitignore exists",
+        ],
+        table: [
+          { left: "/enrich-brief", right: "Turns a brief or Figma frame into a spec-ready story (used in this module)" },
+          { left: "/generate-artifacts", right: "Writes all 3 spec files from the enriched story (used in this module)" },
+          { left: "/visual-verify", right: "Compares the live component to Figma at 375 / 768 / 1440px" },
+          { left: "/sync-tokens", right: "Audits CSS custom properties against Figma Variables" },
+          { left: "/commit", right: "Commits with the Component Spec as the PR description" },
+        ],
+        tableLabels: { left: "Command", right: "What it does" },
+      },
       {
         id: "three-spec-types",
         title: "The Three Spec Types",
@@ -5303,9 +5347,10 @@ Tasks:
     ],
     exercise: {
       title: "Write a Complete Spec Using the SDD-DE Workflow",
-      description: "Pick one component you want to build — Button, Card, or Input are good choices for a first spec. Run /enrich-brief and /generate-artifacts, then review the output and fill any gaps manually.",
+      description: "Pick one component you want to build — Button, Card, or Input are good choices for a first spec. Install the toolkit, then run /enrich-brief and /generate-artifacts, then review the output and fill any gaps manually.",
       steps: [
-        "Open Claude Code in your project directory (SDD-DE must be cloned and CLAUDE.md in root)",
+        "Install the toolkit: run npx @royvillasana/sdd-de in your project root (skip if you already have a .sdd-de/ folder and CLAUDE.md)",
+        "Open Claude Code in your project directory and confirm /enrich-brief and /generate-artifacts are available",
         "Run /enrich-brief with a description of your component — answer every question the skill asks",
         "Review the enriched-story.md — add any acceptance criteria the skill missed",
         "Run /generate-artifacts — point it at your enriched story",
@@ -5315,9 +5360,18 @@ Tasks:
     },
     deliverable: {
       title: "Complete Spec Document Set for One Component",
-      description: "A Component Spec, Interaction Spec, and enriched story for a real component. The Component Spec must have: all variants, all states, all sizes, CSS custom property references (no hex), 'Do not' constraints with intent, and a task checklist. This spec will be used in Module 10 to run your first AI implementation session.",
+      description: "A Component Spec, Interaction Spec, and enriched story for a real component. The Component Spec must have: all variants, all states, all sizes, CSS custom property references (no hex), 'Do not' constraints with intent, and a task checklist. This spec will be used in your first AI implementation session (Module 07).",
     },
     quiz: [
+      {
+        question: "How do you get the /enrich-brief and /generate-artifacts skills into your project?",
+        options: [
+          "Run npx @royvillasana/sdd-de in your project root",
+          "They ship built into Claude Code by default",
+          "Install a browser extension",
+        ],
+        correct: 0,
+      },
       {
         question: "In Spec-Driven Development, what is the contract?",
         options: ["The screenshot", "The spec", "The vibe"],
