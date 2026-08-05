@@ -58,6 +58,8 @@ export interface ConceptItem {
   figmaPanel?: "layers" | "properties" | "autolayout" | "variables";
   /** A framed image/icon shown at the top of the concept card. */
   image?: { src: string; alt: string; caption?: string };
+  /** Render a named animation component after the concept body (e.g. the SDD-DE setup terminal). */
+  animation?: "sdd-setup";
   /** Highlighted callout box (disclaimers, reminders, checklists). */
   callout?: {
     tone?: "info" | "warn" | "success" | "note";
@@ -5087,6 +5089,8 @@ Ready. Open Claude Code in this directory and run:
 
   "module-10": {
     objectives: [
+      "Recognize that this is where the course shifts from learning the tools to building — in a real project you create from scratch",
+      "Follow the mandatory SDD cycle: branch → enrich → specify → apply → visual-verify → sync → commit for each component, then /storybook and /design-doc once every component exists",
       "Install the SDD-DE toolkit (npx @royvillasana/sdd-de) so the spec skills are available in Claude Code",
       "Understand the three spec types — Component, Interaction, and Page — and when to use each",
       "Write a complete Component Spec using the SDD-DE template that AI can execute without asking questions",
@@ -5097,47 +5101,106 @@ Ready. Open Claude Code in this directory and run:
     ],
     concepts: [
       {
-        id: "install-sdd-de",
-        title: "Step 0 — Install the SDD-DE Toolkit",
-        body: "The skills this module runs on — /enrich-brief and /generate-artifacts — come from SDD-DE (Spec-Driven Development for Design Engineers), an npm package that installs the SDD workflow into your project. Run one command from your project root before anything else in this module. You don't clone a repo or configure anything — npx downloads the latest version and writes the skill files, spec templates, and a CLAUDE.md that points Claude Code to them.",
+        id: "start-the-project",
+        title: "This Is Where You Start Building",
+        body: "Everything up to now was learning the pieces. Storybook (Module 03), design.md (Module 04), and CLAUDE.md (Module 05) were informational — you learned what each one is and why it matters. From this module on, you build. The rest of the course runs one real project through the full Spec-Driven Development cycle, one component at a time — and it starts with a spec.",
         callout: {
           tone: "warn",
-          title: "Do this first",
-          body: "The /enrich-brief and /generate-artifacts slash commands do not exist until you install SDD-DE. If you already ran this in an earlier module (you'll see a .sdd-de/ folder and a CLAUDE.md in your root), skip ahead. Requires Node.js 18+ — check with node --version.",
+          title: "Start a brand-new project",
+          body: "Do this work in a fresh project, created from scratch — not in an existing app, and not in this course's website. You'll install the SDD-DE toolkit into that new project in the next step. From there, the toolkit generates your CLAUDE.md and DESIGN.md for you as you build — the earlier modules taught you what those files are so you can read and adjust what the toolkit produces, instead of writing them by hand.",
         },
-        codeBlocks: [
-          {
-            lang: "bash",
-            label: "install SDD-DE",
-            content: "npx @royvillasana/sdd-de",
-          },
-          {
-            lang: "text",
-            label: "expected output",
-            content: `SDD-DE — Spec-Driven Development for Design Engineers
-──────────────────────────────────────────────────────
-  ✓  skills installed  →  .sdd-de/ai-specs/skills/
-  ✓  docs installed    →  .sdd-de/docs/
-  ✓  CLAUDE.md created →  ./CLAUDE.md
-  ✓  .gitignore updated
-
-Ready. Open Claude Code in this directory and run /enrich-brief.`,
-          },
-        ],
         bullets: [
-          ".sdd-de/ai-specs/skills/ — the 5 skill folders, each a SKILL.md Claude Code reads when you type its slash command",
-          ".sdd-de/docs/ — the spec templates (Component, Interaction, Page) and standards docs you'll fill in this module",
-          "CLAUDE.md — written to your project root so Claude Code knows where every skill and template lives",
-          ".gitignore — .sdd-de/ is added automatically if a .gitignore exists",
+          "Create a new, empty project (or a minimal starter for your framework). This is your workspace for the rest of the course.",
+          "You won't hand-write design.md or CLAUDE.md here — the SDD-DE toolkit produces them. Modules 03–05 taught you to read and refine that output.",
+          "Every component and screen you build from now on follows the same repeatable cycle. This module teaches the first part of it: writing the spec.",
+        ],
+      },
+      {
+        id: "install-sdd-de",
+        title: "First: Set Up the SDD-DE Toolkit",
+        animation: "sdd-setup",
+        body: "Before you can write a spec, you need the SDD-DE toolkit. Think of a toolkit as a box of tools you drop into your project one time. SDD-DE — Spec-Driven Development for Design Engineers — teaches your AI assistant the exact, step-by-step way to turn a design into real, production-quality code, and it hands you the slash-command “skills” you’ll use in this module, like /enrich-brief and /generate-artifacts. You set it up once, at the very start, right inside your project folder. Here is exactly what that one command looks like when you run it:",
+        bullets: [
+          "It’s a toolkit, not an app — nothing to log into, and nothing running in the background.",
+          "You add it once per project, from the Terminal, while you are inside that project’s folder.",
+          "When you run it, it asks you a few simple questions about your project, then sets everything up for you.",
+          "After that, your AI assistant knows the SDD workflow and your slash-command skills are ready to type.",
+        ],
+        tabs: [
+          {
+            label: "1. Open the Terminal — inside your project",
+            body: "Open the Terminal. The one thing that matters most: you must be inside your project’s folder before you type anything, or the toolkit will set itself up in the wrong place.",
+            bullets: [
+              "Easiest way: open your project in VS Code, then open its built-in Terminal (top menu → Terminal → New Terminal). It opens inside your project automatically.",
+              "Want to check where you are? Type pwd and press Enter. It prints your current folder — it should end with your project’s name.",
+              "In the wrong folder? Type cd, then a space, then drag your project folder onto the Terminal window, then press Enter.",
+            ],
+          },
+          {
+            label: "2. Type one command",
+            body: "Type this exactly and press Enter. npx comes with Node.js — it fetches the toolkit and runs it right away, without permanently installing anything on your computer.",
+            codeBlocks: [
+              { lang: "bash", label: "run this inside your project folder", content: "npx @royvillasana/sdd-de" },
+            ],
+            note: "Needs Node.js 18 or newer. Not sure? Type node --version and press Enter — if the number starts at v18 or higher, you’re ready.",
+          },
+          {
+            label: "3. Answer a few questions",
+            body: "This is the setup. The toolkit asks about your project so it can configure itself to match. Use the arrow keys to move, and press Enter to choose. There are no wrong answers — pick what fits your project.",
+            bullets: [
+              "Framework — what your project is built with (React, Next, Vue, Svelte, Angular, Astro, and more).",
+              "Language — JavaScript or TypeScript.",
+              "Design source — where your design lives (Figma, a component library, or a code repo).",
+              "Styling — how you style things (Tailwind, plain CSS, and others).",
+              "A few quick follow-ups depending on your answers — like your Figma file URL, your design-token file path, and your test runner. Just answer what it shows (watch the animation above to see the whole thing).",
+            ],
+            note: "Your answers are saved in a file called .sdd-de/project.yaml. Picked wrong? Run the command again, or use the /setup skill later to change them.",
+          },
+          {
+            label: "4. Wait for the checkmarks",
+            body: "The toolkit unpacks its files into your project and prints a list of green checkmarks. When you see them, you’re done — you never have to set this up again for this project.",
+            codeBlocks: [
+              { lang: "text", label: "what a finished setup looks like", content: `SDD-DE — Spec-Driven Development for Design Engineers
+─────────────────────────────────────
+  ✓  CLAUDE.md created      →  ./CLAUDE.md
+  ✓  skills installed       →  .sdd-de/ai-specs/skills/
+  ✓  editor skills linked   →  .claude/skills/
+  ✓  docs & templates       →  .sdd-de/docs/
+  ✓  project config saved   →  .sdd-de/project.yaml
+
+Ready. Open your AI assistant in this folder and type /enrich-brief.` },
+            ],
+            note: "Now open Claude Code (or your AI assistant) in the same folder — it reads CLAUDE.md automatically, so it already knows your setup.",
+          },
         ],
         table: [
-          { left: "/enrich-brief", right: "Turns a brief or Figma frame into a spec-ready story (used in this module)" },
-          { left: "/generate-artifacts", right: "Writes all 3 spec files from the enriched story (used in this module)" },
-          { left: "/visual-verify", right: "Compares the live component to Figma at 375 / 768 / 1440px" },
-          { left: "/sync-tokens", right: "Audits CSS custom properties against Figma Variables" },
-          { left: "/commit", right: "Commits with the Component Spec as the PR description" },
+          { left: "/enrich-brief", right: "Turn a rough brief or a Figma frame into a spec-ready story — you’ll use this next" },
+          { left: "/generate-artifacts", right: "Write all three specs (Component, Interaction, Page) from that story" },
+          { left: "…and more", right: "The toolkit ships more skills (visual-verify, sync-tokens, commit, and others). See the SDD-DE toolkit link in Resources for the full list." },
         ],
-        tableLabels: { left: "Command", right: "What it does" },
+        tableLabels: { left: "Skill you’ll use here", right: "What it does" },
+      },
+      {
+        id: "the-sdd-cycle",
+        title: "The Full SDD Cycle — What You Run for Every Component",
+        body: "SDD-DE follows one strict, repeatable cycle. You run the whole thing for a single component — from a branch to a merged PR — then repeat it for the next component. The order never changes and nothing is skipped. Steps 0–6 repeat for every component; the last two are a recommended transition you run once, after all your components exist. This module focuses on Steps 1 and 2 — writing the spec — and the modules that follow go deeper on the rest.",
+        callout: {
+          tone: "info",
+          title: "The branch is created for you",
+          body: "You no longer run git checkout -b by hand. /generate-artifacts creates the feature branch automatically before it writes the specs, so your work never lands on main — if you're on main it branches for you, and if you're already on the right feature branch it reuses it. (Only writing specs manually, outside the skill? Then create the branch yourself — you'll learn the Git side in Module 10.)",
+        },
+        table: [
+          { left: "0 · Branch (automatic)", right: "A feature branch must exist before any file changes — but you don't create it. /generate-artifacts (Step 2) branches for you, then writes the specs onto it. Never work on main." },
+          { left: "1 · Enrich  ·  /enrich-brief", right: "Turn a brief or a Figma frame into a spec-ready story with acceptance criteria and token needs." },
+          { left: "2 · Specify  ·  /generate-artifacts", right: "Creates the feature branch automatically, then generates all three specs: Component, Interaction, and Page. (This module.)" },
+          { left: "3 · Apply  ·  Claude Code", right: "Implement the spec one task at a time — check each task off and inspect it before the next." },
+          { left: "4 · Visual Verify  ·  /visual-verify", right: "Compare the live build to the design at 375 / 768 / 1440px, and run an accessibility check." },
+          { left: "5 · Sync  ·  /sync-tokens", right: "Update design.md and your token files so they match what you actually built." },
+          { left: "6 · Commit  ·  /commit", right: "Open a PR where the spec itself is the description." },
+          { left: "▸ then Storybook  ·  /storybook", right: "Once every component is committed: generate a story for each one and launch the Storybook dev server to review them all together." },
+          { left: "▸ then DESIGN.md  ·  /design-doc", right: "Generate DESIGN.md in the @google/design.md format, lint it, export the tokens, and point CLAUDE.md at it — ready for building screens." },
+        ],
+        tableLabels: { left: "Step (repeat 0–6 per component)", right: "What happens" },
       },
       {
         id: "three-spec-types",
@@ -5220,6 +5283,11 @@ As a user, I want to click a button to submit a form so that I get clear feedbac
         id: "generate-artifacts-skill",
         title: "Step 2 — /generate-artifacts: All 3 Specs in One Command",
         body: "Once the enriched story is complete, /generate-artifacts reads it and writes all three spec documents — Component Spec, Interaction Spec, and Page Spec — using the SDD-DE templates as the structure. This is the step that makes spec writing fast: the enrichment does the thinking, the artifacts capture it.",
+        callout: {
+          tone: "note",
+          title: "One component first — then scale to the rest",
+          body: "This whole procedure — /enrich-brief then /generate-artifacts — runs per component, and you decide the scope. You can spec a single component or every component in your Figma file. Do one component all the way through first: generate its specs, build it, and confirm you're happy with the result. Once the process works for you, create the rest — one at a time when a component needs extra care, or a batch of several in one session when they're straightforward. You never have to spec the whole file at once.",
+        },
         tabs: [
           {
             label: "Component Spec",
@@ -5349,13 +5417,15 @@ Tasks:
       title: "Write a Complete Spec Using the SDD-DE Workflow",
       description: "Pick one component you want to build — Button, Card, or Input are good choices for a first spec. Install the toolkit, then run /enrich-brief and /generate-artifacts, then review the output and fill any gaps manually.",
       steps: [
-        "Install the toolkit: run npx @royvillasana/sdd-de in your project root (skip if you already have a .sdd-de/ folder and CLAUDE.md)",
+        "Create a brand-new project from scratch (an empty repo, or a minimal starter for your framework) — this is your workspace for the rest of the course",
+        "Install the toolkit: run npx @royvillasana/sdd-de in your new project's root and answer the setup questions",
         "Open Claude Code in your project directory and confirm /enrich-brief and /generate-artifacts are available",
         "Run /enrich-brief with a description of your component — answer every question the skill asks",
         "Review the enriched-story.md — add any acceptance criteria the skill missed",
         "Run /generate-artifacts — point it at your enriched story",
         "Open the generated component-spec.md and read it as if you are the AI receiving it — fix every gap",
         "Add at least two 'Do not' constraints that reflect intent, not just measurements",
+        "Once you're happy with this component's specs, repeat the process for the rest — one at a time, or a batch of several in one session",
       ],
     },
     deliverable: {
@@ -5642,9 +5712,10 @@ Do not stop for clarification. If a decision is unclear, make the most spec-cons
             label: "full autonomous loop setup",
             content: `# 1. Make sure SDD-DE is installed and spec is complete
 #    /enrich-brief → /generate-artifacts → review → done
+#    (/generate-artifacts already put you on feature/primary-button-spec)
 
-# 2. Create a feature branch (mandatory before bypass mode)
-git checkout -b feature/primary-button-spec
+# 2. Confirm you're on that feature branch, not main
+git branch --show-current
 
 # 3. Start Claude Code in bypass permissions mode
 claude --dangerously-skip-permissions

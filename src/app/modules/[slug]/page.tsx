@@ -8,6 +8,7 @@ import { CardCompareTabs } from "@/components/card-compare-tabs";
 import { FigmaPanel } from "@/components/figma-panels";
 import { ModuleLockGate } from "@/components/module-lock-gate";
 import { TabGroupWrapper } from "@/components/tab-group-wrapper";
+import { SddSetupTerminal } from "@/components/sdd-setup-terminal";
 import { allModules, capstoneModule } from "@/lib/course-data";
 import { moduleContent } from "@/lib/module-content";
 import { CapstoneEval } from "@/components/capstone-eval";
@@ -391,6 +392,9 @@ export default async function ModulePage({ params }: Props) {
                       <p className="text-[15.5px] leading-[1.65] font-medium mb-[18px]">
                         {concept.body}
                       </p>
+
+                      {/* Named animation (e.g. the SDD-DE setup terminal) */}
+                      {concept.animation === "sdd-setup" && <SddSetupTerminal />}
 
                       {/* Callout — disclaimers, reminders, checklists */}
                       {concept.callout && (() => {

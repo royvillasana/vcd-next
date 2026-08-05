@@ -369,6 +369,28 @@ export default function ResourcesPage() {
                 the tool, not the author. All work stays in your local environment.
               </p>
             </div>
+            <a
+              href="https://site-omega-red-44.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group rounded-[20px] border-[3px] border-[#191510] bg-white p-6 shadow-[4px_4px_0_#191510] block transition-transform duration-[140ms] hover:-translate-y-1"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-[19px] font-extrabold">SDD-DE Toolkit — the spec-driven workflow</h3>
+                <span className="font-mono text-[11px] opacity-40 transition-opacity group-hover:opacity-80 whitespace-nowrap">
+                  Open ↗
+                </span>
+              </div>
+              <p className="text-sm font-medium leading-[1.6] opacity-75">
+                Spec-Driven Development for Design Engineers — the portable toolkit you
+                install with <span className="font-mono">npx @royvillasana/sdd-de</span>.
+                It sets up the SDD workflow, the spec templates, and the slash-command
+                skills (<span className="font-mono">/enrich-brief</span>,{" "}
+                <span className="font-mono">/generate-artifacts</span>, and more) used from
+                Module 06 onward. Open the site to see every skill and the full first-run
+                setup in detail.
+              </p>
+            </a>
           </div>
         </section>
 
