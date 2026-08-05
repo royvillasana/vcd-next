@@ -3451,6 +3451,7 @@ Fix: add these styles to the disabled selector in button.module.css."`,
       "Understand design.md as an open-source specification by Google for structured AI-readable design documentation",
       "Write valid YAML front matter with color, dimension, and typography tokens",
       "Structure the 9 canonical markdown sections so any AI tool can parse your design system correctly",
+      "Document each component by linking to its Storybook story as the source of truth, then binding its tokens and rules",
       "Use token references ({color.primary}) to create a single source of truth across your file",
       "Run the design.md CLI to lint, diff, and export your tokens",
       "Connect design.md to your CLAUDE.md and Figma workflow as part of a three-layer context system",
@@ -3934,7 +3935,7 @@ text, and **Inter** (sans-serif) for all UI text, body copy, and labels.
           },
           {
             label: "Components",
-            body: "The Components section is the most important part of design.md for AI code generation. Each component entry documents its token bindings, variants, and behavioral rules.",
+            body: "The Components section is the most important part of design.md for AI code generation. Each component entry links to its Storybook story — the live, interactive source of truth for every variant and state — then documents the token bindings and rules the AI must follow when generating code.",
             codeBlocks: [
               {
                 lang: "markdown",
@@ -3946,6 +3947,14 @@ text, and **Inter** (sans-serif) for all UI text, body copy, and labels.
 A button initiates an action. Use the primary variant for the most
 important action on any given page or view. Use secondary for supporting
 actions. Use ghost for tertiary actions in dense UIs.
+
+| | |
+|---|---|
+| **Storybook** | https://storybook.example.com/?path=/docs/button--docs |
+| **Default story** | https://storybook.example.com/?path=/story/button--default |
+
+The story is the source of truth for every variant and state. Bind these
+tokens when generating code:
 
 **Token bindings — primary variant**
 
@@ -3976,6 +3985,11 @@ actions. Use ghost for tertiary actions in dense UIs.
 
 A card groups related content with a surface and optional shadow.
 
+| | |
+|---|---|
+| **Storybook** | https://storybook.example.com/?path=/docs/card--docs |
+| **Default story** | https://storybook.example.com/?path=/story/card--default |
+
 | Property | Token |
 |----------|-------|
 | backgroundColor | {color.surface} |
@@ -3984,6 +3998,7 @@ A card groups related content with a surface and optional shadow.
 | shadow | {elevation.md} |`,
               },
             ],
+            note: "Link to the Storybook story instead of re-describing every variant in prose. The story is live and always current, so it never drifts from the built component — design.md stays the token-and-rules map, Storybook is the interactive reference.",
           },
           {
             label: "Do's & Don'ts",
@@ -4259,17 +4274,27 @@ margins on desktop. Mobile: 4 columns, 16px gutter, 16px margins.
           },
           {
             label: "Components",
-            body: "The Heritage component section documents each component with its token bindings and behavioral rules. This is the section AI uses when generating component code.",
+            body: "The Heritage component section documents each component by linking to its Storybook story — the authoritative, interactive reference — then binding its tokens and stating its rules. This is the section AI uses when generating component code.",
             codeBlocks: [
               {
                 lang: "markdown",
                 label: "Components section",
                 content: `## Components
 
+Each component links to its Storybook story — the live reference for every
+variant and state. The entry below is the map: what the component is, where
+its story lives, the tokens it binds, and the rules to follow.
+
 ### Button
 
 Buttons initiate actions. Three variants: primary (main action),
 secondary (supporting action), ghost (tertiary in dense contexts).
+
+| | |
+|---|---|
+| **Storybook** | https://storybook.heritage.design/?path=/docs/button--docs |
+| **Default story** | https://storybook.heritage.design/?path=/story/button--default |
+| **Figma** | \`Button / Primary\` |
 
 **Token bindings**
 
@@ -4293,6 +4318,12 @@ secondary (supporting action), ghost (tertiary in dense contexts).
 
 A card groups related content on a surface with optional elevation.
 
+| | |
+|---|---|
+| **Storybook** | https://storybook.heritage.design/?path=/docs/card--docs |
+| **Default story** | https://storybook.heritage.design/?path=/story/card--default |
+| **Figma** | \`Card / Default\` |
+
 | Property | Token |
 |----------|-------|
 | backgroundColor | {color.surface} |
@@ -4305,6 +4336,12 @@ A card groups related content on a surface with optional elevation.
 ### Input
 
 Text inputs for forms. Always pair with a visible label.
+
+| | |
+|---|---|
+| **Storybook** | https://storybook.heritage.design/?path=/docs/input--docs |
+| **Default story** | https://storybook.heritage.design/?path=/story/input--default |
+| **Figma** | \`Input / Default\` |
 
 | Property | Token |
 |----------|-------|
@@ -4398,7 +4435,7 @@ before writing any code.
       steps: [
         "Install the CLI: npm install -g @google/design.md",
         "Create design.md in your project root with the required YAML front matter fields: title, description, version, and at least a color and typography tokens block",
-        "Write the five required sections: Overview, Colors, Typography, Layout & Spacing, and Components with at least one component entry",
+        "Write the five required sections: Overview, Colors, Typography, Layout & Spacing, and Components — each component entry linking to its Storybook story, then its token bindings and rules",
         "Use token references ({color.primary}) in your markdown body instead of hardcoded hex values",
         "Run 'design-md lint design.md' and fix any errors before committing",
         "Update your CLAUDE.md to reference design.md with 'read and follow design.md before writing any code'",
