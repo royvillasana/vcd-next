@@ -133,6 +133,26 @@ export const moduleContent: Record<string, ModuleContent> = {
         },
       },
       {
+        id: "why-the-terminal",
+        title: "Why the Terminal — and Why the CLI, Not the App",
+        body: "Here is the one difference everything else comes from: a chat app talks about your code; the CLI works on your code. With the desktop or web app you have a conversation — Claude writes something, shows it to you, and you switch to your project, paste it into the right file, save, and run it. With the CLI in the Terminal, Claude is inside your project and does those things itself — it opens the file, edits it, runs your dev server, checks the result — while you watch and approve. Think of the apps as an expert on the phone giving great advice, and the CLI as that same expert in the room with you, hands on your actual files.",
+        table: [
+          { left: "In a chat / desktop app", right: "It writes the code and shows it to you. You find Button.tsx, paste it into the right spot, save, start the dev server, and check it. You do the doing." },
+          { left: "In the Terminal CLI", right: "It finds Button.tsx, edits it, runs the dev server, and says \"done — take a look.\" It did the doing, in your real project." },
+        ],
+        tableLabels: { left: "Same task: “add a hover state to the Button”", right: "What happens" },
+        bullets: [
+          "It works on your real project. Your files — and the whole SDD-DE workflow (CLAUDE.md, the .sdd-de/ skills, your specs, design.md) — live in your folder, and the CLI acts on them directly.",
+          "It runs your tools and reads the result — git, the dev server, Storybook, the design.md CLI, the /enrich-brief and /generate-artifacts skills — so it can run → check → fix on its own. That closed loop is the heart of spec-driven development.",
+          "It's automatable and universal. Because it's a command, not a button, it can run unattended (the autonomous SDD loop later relies on this), and the Terminal works the same on every machine.",
+        ],
+        callout: {
+          tone: "note",
+          title: "The apps aren't worse — they're for a different job",
+          body: "Use the Claude desktop or web app to ask a question, explore an idea, or get quick one-off help — and don't write them off as 'just a chat box,' since they keep gaining abilities. The always-true point is simpler: the CLI is the version that does the work inside your project and drives your local tools, which is exactly what this course's build-and-ship loop needs. That's why we install it.",
+        },
+      },
+      {
         id: "open-terminal-mac",
         title: "Open the Terminal on macOS",
         body: "There are two reliable ways to open the Terminal on a Mac. Spotlight is the fastest.",
