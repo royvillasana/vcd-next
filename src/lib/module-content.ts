@@ -1806,6 +1806,12 @@ https://figma.com/design/FILE_ID/Project-Name?node-id=42-178
         "Review the generated file — check that layer names became class names, variables became token references, and component properties became props",
         "Note any discrepancy between what you designed and what was generated — these become your first prompt refinements",
       ],
+      resource: {
+        kind: "link",
+        label: "Open the Design Engineering System in Figma",
+        href: "https://www.figma.com/design/ojko9pGfsDAvmUf2DA38d2/Design-Engineering-System?node-id=8189-447",
+        note: "the Figma file for this exercise",
+      },
     },
     deliverable: {
       title: "AI-Generated Component from Figma",
@@ -3470,15 +3476,118 @@ Fix: add these styles to the disabled selector in button.module.css."`,
 
   "module-07": {
     objectives: [
+      "Install the design.md CLI first, then use it to give Claude the format spec and to lint, diff, and export your tokens",
       "Understand design.md as an open-source specification by Google for structured AI-readable design documentation",
-      "Write valid YAML front matter with color, dimension, and typography tokens",
-      "Structure the 9 canonical markdown sections so any AI tool can parse your design system correctly",
+      "Write valid YAML front matter with colors, typography, rounded, spacing, and components tokens",
+      "Structure the 8 canonical markdown sections in the order the spec expects, so any AI tool can read your design system",
+      "Write your design.md from the workshop design system's Storybook — a system already built for this exercise, not the components from your earlier modules",
       "Document each component by linking to its Storybook story as the source of truth, then binding its tokens and rules",
-      "Use token references ({color.primary}) to create a single source of truth across your file",
-      "Run the design.md CLI to lint, diff, and export your tokens",
+      "Use token references ({colors.primary}) so component tokens point at your palette instead of repeating values",
       "Connect design.md to your CLAUDE.md and Figma workflow as part of a three-layer context system",
     ],
     concepts: [
+      {
+        id: "install-cli",
+        title: "Start Here: Install the design.md CLI",
+        body: "Before you write a single line of design.md, install its CLI. The design.md CLI is the official command-line tool from Google Labs, published on npm as @google/design.md. It does two jobs you need to create the file: it prints the format specification so Claude Code knows exactly how a design.md must be written, and it lints the file you produce so you know it is valid. The CLI does not write design.md for you — you and Claude write it, the CLI keeps it correct.",
+        tabs: [
+          {
+            label: "1. Install",
+            body: "Install the CLI inside your project, from the project root. This adds it to package.json so everyone who clones the project gets the same version. You can also skip the install and run it on demand with npx — both work, and every command in this module uses the npx form.",
+            codeBlocks: [
+              {
+                lang: "bash",
+                label: "install in your project",
+                content: `# From your project root
+npm install @google/design.md`,
+              },
+              {
+                lang: "bash",
+                label: "or run without installing",
+                content: `# npx downloads the CLI on demand and runs it
+npx @google/design.md spec`,
+              },
+            ],
+            note: "The package name really is @google/design.md — the .md is part of the name, not a file.",
+          },
+          {
+            label: "2. Verify",
+            body: "Run the spec command. If the CLI is installed correctly it prints the full design.md format specification in your Terminal. That output is also exactly what you will hand to Claude Code in the next step.",
+            codeBlocks: [
+              {
+                lang: "bash",
+                label: "verify",
+                content: `npx @google/design.md spec
+
+# Expected: the DESIGN.md format specification prints as Markdown.
+# Add --rules to also see the linting rules:
+npx @google/design.md spec --rules`,
+              },
+            ],
+          },
+          {
+            label: "3. Create the File",
+            body: "With the CLI installed, creating design.md is a three-move loop: give Claude Code the spec, have it write the file from your source design system, then lint and fix. Paste this prompt into Claude Code from your project root.",
+            codeBlocks: [
+              {
+                lang: "text",
+                label: "prompt for Claude Code",
+                content: `Run "npx @google/design.md spec --rules" and read the output —
+that is the format you must follow.
+
+Then create design.md in the project root documenting the design
+system in this Storybook: https://workshop-roan-eta.vercel.app/
+(the full story list is at /index.json).
+
+When the file is written, run "npx @google/design.md lint design.md"
+and fix every error and warning it reports.`,
+              },
+            ],
+            note: "You will do this for real in the exercise at the end of the module. The rest of the module explains what the file contains so you can review what Claude writes instead of accepting it blindly.",
+          },
+          {
+            label: "Windows",
+            body: "On Windows the .md at the end of the command name can collide with the Markdown file association: the command prints nothing, or opens a file in your Markdown editor. Use the dot-free designmd alias instead — it is the same tool.",
+            codeBlocks: [
+              {
+                lang: "bash",
+                label: "Windows / PowerShell",
+                content: `# Quote the package name when installing
+npm install "@google/design.md"
+
+# Run commands through the designmd alias
+npx -p @google/design.md designmd spec
+npx -p @google/design.md designmd lint design.md`,
+              },
+            ],
+          },
+          {
+            label: "Troubleshooting",
+            body: "The one install error you are likely to meet is ENOVERSIONS — 'No versions available for @google/design.md'. It almost always means npm is not looking at the public registry, which is common on a company laptop with a corporate mirror.",
+            codeBlocks: [
+              {
+                lang: "bash",
+                label: "fix ENOVERSIONS",
+                content: `# Check which registry npm is using
+npm config get registry
+# It should print: https://registry.npmjs.org/
+
+# After fixing the registry, clear the cached failure and retry
+npm cache clean --force
+npm install @google/design.md`,
+              },
+            ],
+            note: "If the registry is set to a company mirror and you cannot change it, ask in the workshop Slack before continuing.",
+          },
+        ],
+        tools: [
+          {
+            name: "design.md on GitHub",
+            href: "https://github.com/google-labs-code/design.md",
+            description: "The official repository — spec, CLI reference, and examples",
+          },
+        ],
+      },
       {
         id: "what-is-design-md",
         title: "What Is design.md",
@@ -3493,585 +3602,454 @@ Fix: add these styles to the disabled selector in button.module.css."`,
           "vs README: design.md has a defined schema — tokens, sections, and linting rules that a README does not enforce",
           "vs Figma: plain text, versioned in git, readable by CLI tools and AI without a browser",
           "vs CLAUDE.md: CLAUDE.md tells AI how to behave; design.md tells AI what your design system looks like",
+          "The format is at version alpha — the spec and CLI are still evolving, so expect details to change",
         ],
       },
       {
-        id: "cli-tools",
-        title: "The design.md CLI",
-        body: "The design.md CLI provides four commands — lint, diff, export, and spec — that turn your design.md into an active part of your development pipeline. Install it globally first, then run any command from your project root.",
-        codeBlocks: [
+        id: "workshop-storybook",
+        title: "Your Source: The Workshop Design System",
+        body: "In this module you write design.md for a design system that already exists. We built one for this exercise and published it as a Storybook — tokens in the Foundations pages, 48 components under Design System. You document that system, not the components you built in earlier modules, so everyone starts from the same complete source and the focus stays on writing a good design.md.",
+        bullets: [
+          "Foundations — Colors & Shadows, Typography, Spacing, Grid, Layout, and Icons: the source for your YAML tokens",
+          "Design System — 48 components (Button, Card, Input, Modal, Table, Tabs…), each with a Docs page and stories for its variants and states",
+          "Every component has a stable URL you can link from the Components section: /?path=/docs/design-system-button--docs",
+          "The full list of stories lives at /index.json — handy to give Claude Code the complete component inventory in one request",
+        ],
+        tools: [
           {
-            lang: "bash",
-            label: "install",
-            content: `# Install the CLI globally
-npm install -g @google/design.md
-
-# Verify installation
-design-md --version`,
+            name: "Workshop Design System — Storybook",
+            href: "https://workshop-roan-eta.vercel.app/",
+            description: "The design system you will document in this module's exercise",
           },
         ],
+        callout: {
+          tone: "info",
+          title: "You don't need your own components for this module",
+          body: "Your design.md is based on the workshop Storybook, not on the Storybook you set up in Module 03. If your earlier components are unfinished or look different, that's fine — nothing in this exercise depends on them.",
+        },
+      },
+      {
+        id: "cli-tools",
+        title: "The design.md CLI Commands",
+        body: "The CLI you installed at the start of this module has four commands — lint, diff, export, and spec. Run each one with npx from your project root. All of them print JSON by default, which is what lets an AI agent read the result and act on it.",
         tabs: [
           {
             label: "Lint",
-            body: "The lint command validates your design.md against the spec's rules. It catches broken token references, missing required sections, contrast ratio failures, and structural issues before they reach production.",
+            body: "The lint command validates your design.md against the spec. It catches broken token references, low-contrast color pairs, and structural problems, and reports them as findings with a severity. It exits with an error only when it finds errors — warnings and infos do not fail the run.",
             codeBlocks: [
               {
                 lang: "bash",
-                label: "design-md lint",
-                content: `# Lint a single file
-design-md lint design.md
-
-# Lint with JSON output (useful in CI)
-design-md lint design.md --format json
+                label: "lint",
+                content: `npx @google/design.md lint design.md
 
 # Example output:
-# ✓ section-order — OK
-# ✓ missing-sections — OK
-# ✗ broken-ref — color.primary-hover not defined (line 87)
-# ✗ contrast-ratio — {color.text.muted} on {color.background}: 3.2:1 < 4.5:1
-#
-# 2 errors, 0 warnings`,
+# {
+#   "findings": [
+#     {
+#       "severity": "error",
+#       "path": "components.button-primary",
+#       "message": "Reference {colors.primary-hover} does not resolve to a defined token."
+#     }
+#   ],
+#   "summary": { "errors": 1, "warnings": 0, "infos": 1 }
+# }`,
               },
             ],
             bullets: [
-              "broken-ref — token references that point to undefined tokens",
-              "missing-primary — no primary color token defined",
-              "contrast-ratio — foreground/background pairs below WCAG AA (4.5:1)",
-              "orphaned-tokens — tokens defined in YAML but never referenced in markdown",
-              "token-summary — sections referencing tokens not in the YAML block",
-              "missing-sections — required sections (Overview, Colors, Typography, Layout, Components) absent",
-              "missing-typography — typography section exists but defines no type styles",
-              "section-order — sections appear in the wrong sequence",
-              "unknown-key — unrecognized keys in the YAML front matter",
+              "broken-ref (error) — a token reference that does not resolve to a defined token",
+              "missing-primary (warning) — colors are defined but there is no primary color",
+              "contrast-ratio (warning) — a component's background/text pair is below WCAG AA (4.5:1)",
+              "orphaned-tokens (warning) — a color token is defined but no component uses it",
+              "missing-typography (warning) — colors are defined but no typography tokens exist",
+              "section-order (warning) — sections appear out of the canonical order",
+              "unknown-key (warning) — a top-level YAML key looks like a typo of a known one (colours → colors)",
+              "token-like-ignored (warning) — an unknown key holds token-like values and was probably misspelled",
+              "token-summary, missing-sections, omitted-rules (info) — summaries and optional-section notices",
             ],
           },
           {
             label: "Diff",
-            body: "The diff command compares two versions of a design.md file and outputs a structured change summary. Use it to understand what changed between design system versions.",
+            body: "The diff command compares two versions of a design.md file and reports which tokens were added, removed, or modified, plus whether the new version introduced a regression (more errors or warnings than before).",
             codeBlocks: [
               {
                 lang: "bash",
-                label: "design-md diff",
-                content: `# Diff two versions of a file
-design-md diff design.md design-v2.md
+                label: "diff",
+                content: `# Compare two files
+npx @google/design.md diff design.md design-v2.md
 
-# Diff against a git revision
-design-md diff design.md HEAD~1:design.md
+# Compare against the last commit
+git show HEAD~1:design.md > design-prev.md
+npx @google/design.md diff design-prev.md design.md
 
 # Example output:
-# Token changes:
-#   ~ color.primary: #5B4A3F → #4A3B32  (value changed)
-#   + color.accent: #C4A882             (added)
-#   - color.secondary-light             (removed)
-#
-# Section changes:
-#   ~ Components/Button: padding rule updated
-#   + Components/Badge: new component added`,
+# {
+#   "tokens": {
+#     "colors": { "added": ["accent"], "removed": [], "modified": ["tertiary"] }
+#   },
+#   "regression": false
+# }`,
               },
             ],
             note: "The diff command is useful in PR reviews — you can see exactly what design system changes a PR introduces without reading the full file.",
           },
           {
             label: "Export",
-            body: "The export command transforms your YAML tokens into formats consumed by code: CSS custom properties, JSON token files, or Tailwind config.",
+            body: "The export command turns your YAML tokens into formats that code consumes: a Tailwind v4 theme, a Tailwind v3 config, or a W3C design tokens file. It prints to the Terminal, so redirect the output into a file with >.",
             codeBlocks: [
               {
                 lang: "bash",
-                label: "design-md export",
-                content: `# Export as CSS custom properties
-design-md export design.md --format css
-# → tokens.css with :root { --color-primary: #5B4A3F; ... }
+                label: "export",
+                content: `# Tailwind v4 — a CSS @theme block with custom properties
+npx @google/design.md export --format css-tailwind design.md > theme.css
 
-# Export as tokens JSON (W3C format)
-design-md export design.md --format tokens-json
-# → tokens.json
+# Tailwind v3 — a theme.extend JSON object
+npx @google/design.md export --format json-tailwind design.md > tailwind.theme.json
 
-# Export as Tailwind theme extension
-design-md export design.md --format tailwind
-# → tailwind-tokens.js
-
-# Specify output file
-design-md export design.md --format css --output src/styles/tokens.css`,
+# W3C Design Tokens (DTCG) JSON
+npx @google/design.md export --format dtcg design.md > tokens.json`,
               },
             ],
-            note: "Export replaces manual token management. Instead of maintaining tokens.css by hand, generate it from design.md. Commit design.md, not the generated output.",
+            note: "Export replaces manual token management. Instead of maintaining a token file by hand, generate it from design.md — design.md stays the source of truth.",
           },
           {
             label: "Spec",
-            body: "The spec command generates a visual HTML specification from your design.md — a standalone page showing all tokens, type scales, and component documentation.",
+            body: "The spec command prints the design.md format specification itself. It does not read your file — its job is to give an AI agent the rules of the format before it writes or edits a design.md.",
             codeBlocks: [
               {
                 lang: "bash",
-                label: "design-md spec",
-                content: `# Generate a spec HTML file
-design-md spec design.md
-# → design-spec.html
+                label: "spec",
+                content: `# Print the format specification
+npx @google/design.md spec
 
-# Open in browser immediately
-design-md spec design.md --open
+# Include the linting rules table
+npx @google/design.md spec --rules
 
-# Specify output path
-design-md spec design.md --output docs/spec.html`,
+# Only the rules, as JSON
+npx @google/design.md spec --rules-only --format json`,
               },
             ],
-            note: "The generated spec is a single static HTML file — no server needed. Share it with stakeholders as a living reference that updates whenever design.md changes.",
+            note: "This is the command behind 'Create the File' at the top of the module: Claude runs spec, learns the format, then writes your design.md.",
           },
         ],
       },
       {
         id: "yaml-front-matter",
         title: "YAML Front Matter & Token Types",
-        body: "The YAML front matter is the machine-readable half of design.md. It defines four token types — Color, Dimension, Token Reference, and Typography — each with a specific syntax the CLI and AI tools understand.",
+        body: "The YAML front matter is the machine-readable half of design.md. It holds five token groups — colors, typography, rounded, spacing, and components — built from four value types: Color, Typography, Dimension, and Token Reference. These are the exact values an AI agent uses; the markdown below them explains why they exist and how to apply them.",
         tabs: [
           {
             label: "File Structure",
-            body: "Every design.md file starts with a YAML block delimited by triple dashes. The block contains metadata fields and a tokens object with your design tokens organized by type.",
+            body: "A design.md file starts with a YAML block fenced by a line containing exactly three dashes at the top and bottom. Inside it, each token group is its own top-level key. The markdown body follows the closing fence.",
             codeBlocks: [
               {
                 lang: "markdown",
                 label: "design.md",
                 content: `---
-title: My Design System
-description: Design tokens and documentation for all products.
-version: 1.0.0
-tokens:
-  color:
-    primary:
-      value: "#0F52BA"
-      description: Primary brand color for CTAs and links
-    background:
-      value: "#F8F9FA"
-      description: Page and surface background
-  dimension:
-    spacing:
-      sm: "8px"
-      md: "16px"
-      lg: "24px"
-  typography:
-    body:
-      fontFamily: "Inter, sans-serif"
-      fontSize: "16px"
-      fontWeight: "400"
-      lineHeight: "1.6"
+version: alpha
+name: My Design System
+description: Tokens and guidance for all our products.
+colors:
+  primary: "#0F52BA"
+  neutral: "#F8F9FA"
+typography:
+  body-md:
+    fontFamily: Inter
+    fontSize: 16px
+    fontWeight: 400
+    lineHeight: 1.6
+rounded:
+  md: 8px
+spacing:
+  md: 16px
+components:
+  button-primary:
+    backgroundColor: "{colors.primary}"
+    rounded: "{rounded.md}"
 ---
 
 ## Overview
 
-...markdown documentation follows...`,
+...markdown guidance follows...`,
               },
             ],
-            note: "The tokens block is the source of truth. All references in the markdown body should point to tokens defined here.",
+            bullets: [
+              "name — the design system's name",
+              "version and description — optional; the current format version is alpha",
+              "colors, typography, rounded, spacing, components — the five token groups, each a top-level key",
+              "omitted — optional list of groups you intentionally leave out (for example spacing), so the linter stops flagging them as missing",
+            ],
+            note: "The group names are plural and sit at the top level — colors, not color, and no wrapping tokens object. The unknown-key lint rule flags near-misses such as colours.",
           },
           {
             label: "Color Tokens",
-            body: "Color tokens store CSS-compatible color values. Use any valid CSS color format: hex, rgb(), or oklch(). Each token has a value and an optional description field.",
+            body: "The colors group is a flat map of token name to color value. Any valid CSS color works — hex, rgb(), hsl(), oklch(), named colors — but hex is the recommended default. Quote the value so YAML does not read the # as a comment.",
             codeBlocks: [
               {
                 lang: "yaml",
-                label: "color tokens",
-                content: `tokens:
-  color:
-    # Hex — most common
-    primary:
-      value: "#5B4A3F"
-      description: Primary brand color, used for main CTAs
+                label: "colors",
+                content: `colors:
+  # Hex — the recommended default
+  primary: "#1A1C1E"
+  secondary: "#6C7278"
+  tertiary: "#B8422E"
+  neutral: "#F7F5F2"
 
-    # RGB
-    secondary:
-      value: "rgb(141, 123, 111)"
-      description: Secondary brand color
+  # Any other CSS color format is valid too
+  accent: "oklch(62% 0.18 250)"
 
-    # oklch — perceptually uniform, great for dark mode
-    accent:
-      value: "oklch(0.65 0.15 45)"
-      description: Accent color for highlights and badges
-
-    # Nested color groups
-    text:
-      primary:
-        value: "{color.primary}"
-        description: Primary text — references the primary brand token
-      muted:
-        value: "#6B7280"
-        description: Secondary text, placeholders, captions`,
+  # Names are yours to choose — these are common ones
+  surface: "#FFFFFF"
+  on-surface: "#1A1C1E"
+  error: "#B3261E"`,
               },
             ],
-          },
-          {
-            label: "Dimension Tokens",
-            body: "Dimension tokens store size values in CSS units: px, em, or rem. Use them for spacing, border-radius, font sizes, icon sizes, and any value that represents a measurement.",
-            codeBlocks: [
-              {
-                lang: "yaml",
-                label: "dimension tokens",
-                content: `tokens:
-  dimension:
-    # Spacing scale (4px base)
-    spacing:
-      xs: "4px"
-      sm: "8px"
-      md: "16px"
-      lg: "24px"
-      xl: "32px"
-      2xl: "48px"
-
-    # Border radius
-    radius:
-      sm: "4px"
-      md: "8px"
-      lg: "16px"
-      full: "9999px"
-
-    # Elevation (box-shadow blur values)
-    elevation:
-      sm: "2px"
-      md: "8px"
-      lg: "24px"
-
-    # Icon sizing
-    icon:
-      sm: "16px"
-      md: "20px"
-      lg: "24px"`,
-              },
+            bullets: [
+              "Always define primary — without it the missing-primary rule warns and agents invent one",
+              "Common palette names, in order: primary, secondary, tertiary, neutral",
+              "Other widely used names: surface, on-surface, error",
+              "Any token name is accepted as long as its value is a valid color",
             ],
           },
           {
             label: "Typography Tokens",
-            body: "Typography tokens define complete text styles as objects with four required fields: fontFamily, fontSize, fontWeight, and lineHeight. Define every text style your system uses — headings, body, captions, labels, code.",
+            body: "The typography group maps a level name to an object of font properties. Most systems define 9 to 15 levels, named by role and size — headline, body, label, each in small, medium, and large.",
             codeBlocks: [
               {
                 lang: "yaml",
-                label: "typography tokens",
-                content: `tokens:
-  typography:
-    # Display sizes
-    display-lg:
-      fontFamily: "Georgia, serif"
-      fontSize: "48px"
-      fontWeight: "700"
-      lineHeight: "1.1"
-
-    display-md:
-      fontFamily: "Georgia, serif"
-      fontSize: "36px"
-      fontWeight: "600"
-      lineHeight: "1.15"
-
-    # Headings
-    heading-lg:
-      fontFamily: "Georgia, serif"
-      fontSize: "28px"
-      fontWeight: "600"
-      lineHeight: "1.25"
-
-    # Body text
-    body-lg:
-      fontFamily: "Inter, sans-serif"
-      fontSize: "18px"
-      fontWeight: "400"
-      lineHeight: "1.7"
-
-    body-md:
-      fontFamily: "Inter, sans-serif"
-      fontSize: "16px"
-      fontWeight: "400"
-      lineHeight: "1.6"
-
-    # UI text
-    label-sm:
-      fontFamily: "Inter, sans-serif"
-      fontSize: "12px"
-      fontWeight: "500"
-      lineHeight: "1.4"
-
-    # Monospace
-    code:
-      fontFamily: "'JetBrains Mono', monospace"
-      fontSize: "14px"
-      fontWeight: "400"
-      lineHeight: "1.65"`,
+                label: "typography",
+                content: `typography:
+  h1:
+    fontFamily: Public Sans
+    fontSize: 48px
+    fontWeight: 600
+    lineHeight: 1.1
+    letterSpacing: -0.02em
+  body-md:
+    fontFamily: Public Sans
+    fontSize: 16px
+    fontWeight: 400
+    lineHeight: 1.6
+  label-caps:
+    fontFamily: Space Grotesk
+    fontSize: 12px
+    fontWeight: 500
+    lineHeight: 1
+    letterSpacing: 0.1em`,
               },
+            ],
+            bullets: [
+              "fontFamily — the typeface name",
+              "fontSize — a dimension: 16px, 1rem",
+              "fontWeight — a number: 400, 600, 700",
+              "lineHeight — a unitless multiplier (1.6, recommended) or a dimension (24px)",
+              "letterSpacing — a dimension, usually in em",
+              "fontFeature and fontVariation — optional, for OpenType features and variable fonts",
             ],
           },
           {
-            label: "Token References",
-            body: "Token references let one token point to another using the {path.to.token} syntax. This creates a single source of truth — change the base value and every reference updates automatically.",
+            label: "Spacing & Rounded",
+            body: "Spacing and rounded are both scales: a level name mapped to a dimension. A dimension is a number with a unit — px, em, or rem. Spacing values may also be plain numbers, for things like column counts.",
             codeBlocks: [
               {
                 lang: "yaml",
-                label: "token references",
-                content: `tokens:
-  color:
-    # Base palette values
-    brand-dark:
-      value: "#5B4A3F"
-    brand-mid:
-      value: "#8D7B6F"
-    white:
-      value: "#FFFFFF"
-    error-red:
-      value: "#DC3545"
+                label: "spacing and rounded",
+                content: `spacing:
+  xs: 4px
+  sm: 8px
+  md: 16px
+  lg: 32px
+  xl: 64px
+  gutter: 24px
+  columns: 12
 
-    # Semantic tokens — reference base values
-    # Change brand-dark and ALL of these update
-    primary:
-      value: "{color.brand-dark}"
-      description: Primary brand color
-
-    text-on-primary:
-      value: "{color.white}"
-      description: Text that sits on top of primary backgrounds
-
-    error:
-      value: "{color.error-red}"
-      description: Error states
-
-  # Components can reference semantic tokens
-  # button-primary-bg -> color.primary -> color.brand-dark -> #5B4A3F
-  component:
-    button-primary:
-      backgroundColor: "{color.primary}"
-      textColor: "{color.text-on-primary}"
-      padding: "{dimension.spacing.md} {dimension.spacing.lg}"
-      borderRadius: "{dimension.radius.md}"`,
+rounded:
+  sm: 4px
+  md: 8px
+  lg: 12px
+  full: 9999px`,
               },
             ],
-            note: "The CLI's broken-ref linting rule flags any {path.to.token} reference that points to a token that does not exist.",
+            note: "Level names are free-form. xs, sm, md, lg, xl, and full are the common ones, and descriptive keys such as gutter or margin are just as valid. There are no separate groups for shadows or border widths — describe those in the Elevation & Depth and Shapes sections.",
+          },
+          {
+            label: "Components & References",
+            body: "The components group gives each component a set of property tokens. Instead of repeating values, properties point at other tokens with a reference: the path to the token, wrapped in curly braces. Change the palette value once and every component that references it follows.",
+            codeBlocks: [
+              {
+                lang: "yaml",
+                label: "components",
+                content: `components:
+  button-primary:
+    backgroundColor: "{colors.tertiary}"
+    textColor: "{colors.on-tertiary}"
+    typography: "{typography.label-md}"
+    rounded: "{rounded.sm}"
+    padding: 12px
+
+  # States and variants are separate entries with a related name
+  button-primary-hover:
+    backgroundColor: "{colors.tertiary-container}"
+    textColor: "{colors.on-tertiary}"`,
+              },
+            ],
+            bullets: [
+              "Reference syntax: {colors.primary}, {rounded.md}, {typography.label-md} — group name, then token name",
+              "Component properties: backgroundColor, textColor, typography, rounded, padding, size, height, width",
+              "Other property names (borderColor, for example) are accepted, but with a warning",
+              "Hover, active, and pressed states are their own entries: button-primary-hover, button-primary-active",
+              "A reference must point at a single token (colors.primary), not a whole group (colors)",
+              "Quote references — an unquoted curly brace means something else in YAML",
+            ],
+            note: "The broken-ref rule fails lint on any reference that does not resolve. contrast-ratio checks each component's backgroundColor against its textColor, and orphaned-tokens warns about colors no component uses.",
           },
         ],
       },
       {
         id: "markdown-sections",
-        title: "The 9 Canonical Sections",
-        body: "The markdown body of design.md must follow a specific section order. There are 9 canonical sections — some required, some optional — that AI tools and the CLI expect in a defined sequence.",
+        title: "The 8 Canonical Sections",
+        body: "The markdown body of design.md is where you explain the system in plain language. The spec defines 8 sections with a fixed order. You may leave out sections that do not apply, but the ones you include must appear in sequence — that predictable shape is what lets an agent find what it needs.",
         tabs: [
           {
             label: "Section Order",
-            body: "The spec defines a required order for sections. The CLI's section-order linting rule flags files where sections appear out of sequence. This predictable structure is what lets AI tools scan your file efficiently.",
+            body: "Every section is a level-two heading (##). An optional level-one title may sit above them. Sections can be omitted, but those present must follow this order, and each may appear only once.",
             bullets: [
-              "1. Overview — what the system is and its core principles (required)",
-              "2. Colors — how to use the color tokens (required)",
-              "3. Typography — how to use type styles (required)",
-              "4. Layout & Spacing — grid, spacing rules, layout patterns (required, aliases: Layout, Spacing)",
-              "5. Elevation & Depth — shadows, z-index, layering (optional)",
-              "6. Shapes — border-radius rules, icon style (optional)",
-              "7. Components — per-component documentation (required)",
-              "8. Do's and Don'ts — explicit usage rules with examples (optional)",
-              "9. Tool-specific guidance — Stitch, Claude Code, or other tool notes (optional)",
+              "1. Overview — the look and feel (also accepted: Brand & Style)",
+              "2. Colors — the palettes and what each is for",
+              "3. Typography — the type levels and their roles",
+              "4. Layout — grid and spacing strategy (also accepted: Layout & Spacing)",
+              "5. Elevation & Depth — how hierarchy is shown (also accepted: Elevation)",
+              "6. Shapes — corner radius and shape language",
+              "7. Components — guidance per component",
+              "8. Do's and Don'ts — guardrails and common pitfalls",
             ],
-            note: "Sections 1–4 and 7 are required. A file missing any of them will fail the missing-sections lint rule.",
+            note: "Out-of-order sections trigger the section-order warning. A duplicated heading (two ## Colors) is an error that rejects the file. Headings the spec does not know, such as ## Iconography, are kept and never cause an error.",
           },
           {
             label: "Overview",
-            body: "The Overview section introduces the design system — its purpose, the products it serves, and the principles that govern decisions. It is where you put the 'why' behind the visual language.",
+            body: "The Overview is a holistic description of how the product should look and feel: its personality, its audience, and the emotional response it aims for — playful or professional, dense or spacious. Agents fall back on it whenever no specific token or rule covers a decision.",
             codeBlocks: [
               {
                 lang: "markdown",
                 label: "## Overview",
                 content: `## Overview
 
-Heritage is a design system for Heritage Financial products. It serves
-consumer banking apps, the advisor portal, and public marketing pages.
-
-**Design Principles**
-
-- **Warmth** — Use warm neutrals from the Heritage palette. Avoid pure
-  black and cool grays except for text on white backgrounds.
-- **Craftsmanship** — Every component should feel deliberate. Prefer
-  refined spacing over generous whitespace.
-- **Clarity** — Navigation and actions must be immediately understood.
-  Never hide primary actions behind secondary patterns.
-
-**Who uses this system**
-
-This system is used by two product teams and maintained by the design
-systems team. Engineering uses the React component library that is built
-from these tokens.`,
+Architectural Minimalism meets Journalistic Gravitas. The UI evokes a
+premium matte finish — a high-end broadsheet or contemporary gallery.
+It should feel calm, dense with meaning, and never decorative.`,
               },
             ],
+            note: "Write it for someone who has never seen the product. Two or three sentences of clear intent do more than a page of adjectives.",
           },
           {
             label: "Colors",
-            body: "The Colors section explains how to use the color tokens defined in the YAML front matter. It is not a list of hex values — the YAML already has those. It explains usage intent, combinations, and rules.",
+            body: "The Colors section describes each palette and its role. The exact values already live in the colors tokens — here you give each one a human name and say when to use it. Descriptive names like 'Boston Clay' are welcome; they map to systematic token names like tertiary.",
             codeBlocks: [
               {
                 lang: "markdown",
                 label: "## Colors",
                 content: `## Colors
 
-Use {color.primary} for primary actions, links, and active states. It is
-a warm dark brown — Heritage's core brand color.
+The palette is rooted in high-contrast neutrals and a single accent color.
 
-Use {color.secondary} for supporting text, secondary buttons, and hover
-states on neutral backgrounds.
-
-**Rules**
-
-- Never use {color.primary} on backgrounds darker than {color.background}.
-  The contrast ratio drops below 4.5:1.
-- Use {color.error} exclusively for error states. Do not use it for
-  warnings or alerts — those use {color.warning}.
-- {color.text.primary} is the only approved color for body text.
-
-**Light / Dark mode**
-
-The system supports dark mode. Dark mode tokens are defined separately in
-the \`dark\` namespace. Never hardcode #FFFFFF or #000000 — always use
-semantic tokens that resolve differently per mode.`,
+- **Primary (#1A1C1E):** Deep ink for headlines and core text.
+- **Secondary (#6C7278):** Sophisticated slate for borders, captions, metadata.
+- **Tertiary (#B8422E):** "Boston Clay" — the sole driver for interaction.
+- **Neutral (#F7F5F2):** Warm limestone foundation, softer than pure white.`,
               },
             ],
+            note: "The tokens are the authoritative values; the prose is context. If the two ever disagree, fix the prose.",
           },
           {
             label: "Typography",
-            body: "The Typography section describes how to apply type styles — which style maps to which element, what the hierarchy rules are, and what never to do with type.",
+            body: "The Typography section explains the type strategy: which typefaces the system uses, what each level is for, and any rules about applying them. The precise sizes and weights stay in the typography tokens.",
             codeBlocks: [
               {
                 lang: "markdown",
                 label: "## Typography",
                 content: `## Typography
 
-The system uses two typefaces: **Georgia** (serif) for display and heading
-text, and **Inter** (sans-serif) for all UI text, body copy, and labels.
+Two weights of **Public Sans** carry the narrative; **Space Grotesk**
+is reserved for technical data.
 
-**Scale mapping**
-
-| Style | Token | Use |
-|-------|-------|-----|
-| Page title | {typography.display-lg} | h1 — one per page |
-| Section heading | {typography.heading-lg} | h2, modal titles |
-| Card heading | {typography.heading-md} | h3, sidebar titles |
-| Body | {typography.body-md} | article text, descriptions |
-| Caption | {typography.label-sm} | timestamps, helper text |
-
-**Rules**
-
-- Never set body text below {typography.body-md} (16px). Minimum 16px
-  for readability on consumer-facing surfaces.
-- Georgia is for headings only. Do not use it for UI labels, buttons,
-  or any interactive element.
-- Line height must match the token. Do not override lineHeight on
-  individual elements.`,
+- **Headlines:** Public Sans Semi-Bold. One h1 per page.
+- **Body:** Public Sans Regular at 16px — never smaller for prose.
+- **Labels:** Space Grotesk, uppercase, generous letter spacing, for
+  timestamps and metadata only.`,
               },
             ],
           },
           {
+            label: "Layout, Elevation, Shapes",
+            body: "Three short sections describe structure. Layout covers the grid and spacing rhythm and pairs with the spacing tokens. Elevation & Depth explains how hierarchy is shown — shadows, or for flat designs, borders and tonal layers. Shapes sets the shape language and pairs with the rounded tokens.",
+            codeBlocks: [
+              {
+                lang: "markdown",
+                label: "## Layout → ## Shapes",
+                content: `## Layout
+
+A fixed max-width grid (1200px) on desktop, fluid on mobile. Spacing
+follows a strict 8px scale with a 4px half-step for micro-adjustments.
+Related items sit in cards with 24px internal padding.
+
+## Elevation & Depth
+
+Depth comes from tonal layers, not shadows: white cards on the warm
+limestone background. No drop shadows.
+
+## Shapes
+
+Architectural sharpness. Interactive elements use a 4px corner radius;
+cards use 8px. Never mix rounded and sharp corners in one view.`,
+              },
+            ],
+            note: "Shadows have no token group of their own, so Elevation & Depth is the only place an agent learns about them. If your system uses shadows, write their offset, blur, and color here.",
+          },
+          {
             label: "Components",
-            body: "The Components section is the most important part of design.md for AI code generation. Each component entry links to its Storybook story — the live, interactive source of truth for every variant and state — then documents the token bindings and rules the AI must follow when generating code.",
+            body: "Component documentation has two halves. The values — colors, radius, padding, type — go in the components tokens in the front matter. The Components section holds the guidance: what the component is for, when to use each variant, and rules no token can express. In this course every entry also links to the component's Storybook story, the live reference for every variant and state.",
             codeBlocks: [
               {
                 lang: "markdown",
                 label: "## Components",
                 content: `## Components
 
+Each component links to its Storybook story — the live reference for
+every variant and state. Its token values live in the front matter
+under the matching key.
+
 ### Button
 
-A button initiates an action. Use the primary variant for the most
-important action on any given page or view. Use secondary for supporting
-actions. Use ghost for tertiary actions in dense UIs.
+Buttons initiate actions. Primary is the single most important action
+in a view; secondary supports it.
 
-| | |
-|---|---|
-| **Storybook** | https://storybook.example.com/?path=/docs/button--docs |
-| **Default story** | https://storybook.example.com/?path=/story/button--default |
-
-The story is the source of truth for every variant and state. Bind these
-tokens when generating code:
-
-**Token bindings — primary variant**
-
-| Property | Token |
-|----------|-------|
-| backgroundColor | {color.primary} |
-| textColor | {color.text-on-primary} |
-| padding | {dimension.spacing.md} {dimension.spacing.lg} |
-| borderRadius | {dimension.radius.md} |
-| typography | {typography.label-md} |
-
-**Token bindings — hover state**
-
-| Property | Token |
-|----------|-------|
-| backgroundColor | {color.primary-hover} |
-
-**Rules**
-
-- Never place two primary buttons adjacent to each other.
-- Disabled state: opacity 40%, no pointer-events. Do not use a
-  different color token for disabled — use opacity only.
-- Minimum touch target: 44×44px on mobile surfaces.
-
----
+- **Storybook:** https://workshop-roan-eta.vercel.app/?path=/docs/design-system-button--docs
+- **Tokens:** button-primary, button-primary-hover, button-secondary
+- Disabled: 40% opacity, no pointer events. No alternative color.
+- Minimum tap target: 44×44px on touch surfaces.
 
 ### Card
 
-A card groups related content with a surface and optional shadow.
+A card groups related content on a surface.
 
-| | |
-|---|---|
-| **Storybook** | https://storybook.example.com/?path=/docs/card--docs |
-| **Default story** | https://storybook.example.com/?path=/story/card--default |
-
-| Property | Token |
-|----------|-------|
-| backgroundColor | {color.surface} |
-| borderRadius | {dimension.radius.lg} |
-| padding | {dimension.spacing.lg} |
-| shadow | {elevation.md} |`,
+- **Storybook:** https://workshop-roan-eta.vercel.app/?path=/docs/design-system-card--docs
+- **Tokens:** card`,
               },
             ],
-            note: "Link to the Storybook story instead of re-describing every variant in prose. The story is live and always current, so it never drifts from the built component — design.md stays the token-and-rules map, Storybook is the interactive reference.",
+            note: "Linking to Storybook is this course's convention, not a spec requirement — the spec leaves the Components prose free-form. Link to the story instead of re-describing every variant: the story is live, so it never drifts from the built component.",
           },
           {
             label: "Do's & Don'ts",
-            body: "The Do's and Don'ts section captures common misuses of your design system as explicit rules. AI tools read this to avoid generating patterns your system prohibits.",
+            body: "The last section is a short list of practical guardrails — the mistakes you most want an agent to avoid. Keep each line a single, checkable rule starting with Do or Don't.",
             codeBlocks: [
               {
                 lang: "markdown",
                 label: "## Do's and Don'ts",
                 content: `## Do's and Don'ts
 
-### Color
-
-**Do** use semantic color tokens for all surfaces and text.
-
-\`\`\`
-background-color: var(--color-surface);   ✓
-color: var(--color-text-primary);          ✓
-\`\`\`
-
-**Don't** hardcode color values in components.
-
-\`\`\`
-background-color: #ffffff;   ✗
-color: #111827;               ✗
-\`\`\`
-
----
-
-### Spacing
-
-**Do** compose spacing from the scale tokens.
-
-\`\`\`
-padding: var(--spacing-md) var(--spacing-lg);   ✓
-gap: var(--spacing-sm);                          ✓
-\`\`\`
-
-**Don't** use arbitrary pixel values between scale steps.
-
-\`\`\`
-padding: 12px 20px;   ✗  (not on the 4px scale)
-gap: 10px;             ✗
-\`\`\`
-
----
-
-### Typography
-
-**Do** use the defined type scale for all text.
-**Don't** override font-size or line-height on individual elements.
-**Don't** use Georgia for UI labels, buttons, or any interactive text.`,
+- Do use the primary color only for the single most important action per screen
+- Don't mix rounded and sharp corners in the same view
+- Do maintain WCAG AA contrast ratios (4.5:1 for normal text)
+- Don't use more than two font weights on a single screen`,
               },
             ],
           },
@@ -4080,301 +4058,213 @@ gap: 10px;             ✗
       {
         id: "heritage-example",
         title: "Full Example: Heritage Design System",
-        body: "The Heritage design system is the reference example used throughout the official design.md documentation. It demonstrates a complete, valid file from front matter to component documentation.",
+        body: "Heritage is the example design system in the official design.md README. The version below extends it with component tokens to make a complete file, front matter to Do's and Don'ts. Read the four tabs top to bottom as one file — it passes lint with zero errors and zero warnings.",
         tabs: [
           {
             label: "Front Matter",
-            body: "The Heritage front matter block defines three token namespaces — color, dimension, and typography — using all four token types: raw values, nested groups, and token references.",
+            body: "The front matter defines all five token groups. Notice that every component property points at a palette, type, or radius token by reference, and that every color is used by at least one component.",
             codeBlocks: [
               {
                 lang: "yaml",
                 label: "YAML front matter",
                 content: `---
-title: Heritage
-description: Heritage Design System — comprehensive design guidelines
-  and components for all Heritage Financial products.
-version: 1.0.0
-tokens:
-  color:
-    # Base palette
-    brand-dark:
-      value: "#5B4A3F"
-    brand-mid:
-      value: "#8D7B6F"
-    cream:
-      value: "#F5F0EB"
-    white:
-      value: "#FFFFFF"
-    error-red:
-      value: "#DC3545"
-    success-green:
-      value: "#198754"
-
-    # Semantic tokens referencing base palette
-    primary:
-      value: "{color.brand-dark}"
-      description: Primary brand color
-    secondary:
-      value: "{color.brand-mid}"
-      description: Secondary brand color
-    background:
-      value: "{color.cream}"
-      description: Page background
-    surface:
-      value: "{color.white}"
-      description: Component surface color
-    text:
-      primary:
-        value: "{color.brand-dark}"
-      muted:
-        value: "{color.brand-mid}"
-    error:
-      value: "{color.error-red}"
-    success:
-      value: "{color.success-green}"
-
-  dimension:
-    spacing:
-      xs: "4px"
-      sm: "8px"
-      md: "16px"
-      lg: "24px"
-      xl: "32px"
-      2xl: "48px"
-    radius:
-      sm: "4px"
-      md: "8px"
-      lg: "16px"
-      full: "9999px"
-    border:
-      thin: "1px"
-      thick: "2px"
-
-  typography:
-    display-lg:
-      fontFamily: "Georgia, serif"
-      fontSize: "48px"
-      fontWeight: "700"
-      lineHeight: "1.1"
-    heading-lg:
-      fontFamily: "Georgia, serif"
-      fontSize: "28px"
-      fontWeight: "600"
-      lineHeight: "1.25"
-    heading-md:
-      fontFamily: "Georgia, serif"
-      fontSize: "20px"
-      fontWeight: "600"
-      lineHeight: "1.3"
-    body-lg:
-      fontFamily: "Inter, sans-serif"
-      fontSize: "18px"
-      fontWeight: "400"
-      lineHeight: "1.7"
-    body-md:
-      fontFamily: "Inter, sans-serif"
-      fontSize: "16px"
-      fontWeight: "400"
-      lineHeight: "1.6"
-    label-md:
-      fontFamily: "Inter, sans-serif"
-      fontSize: "14px"
-      fontWeight: "500"
-      lineHeight: "1.4"
-    label-sm:
-      fontFamily: "Inter, sans-serif"
-      fontSize: "12px"
-      fontWeight: "500"
-      lineHeight: "1.4"
+version: alpha
+name: Heritage
+description: A broadsheet-inspired system — deep ink, warm limestone, one clay accent.
+colors:
+  primary: "#1A1C1E"
+  secondary: "#6C7278"
+  tertiary: "#B8422E"
+  tertiary-container: "#9A3523"
+  on-tertiary: "#FFFFFF"
+  neutral: "#F7F5F2"
+  surface: "#FFFFFF"
+  on-surface: "#1A1C1E"
+  error: "#B3261E"
+typography:
+  h1:
+    fontFamily: Public Sans
+    fontSize: 48px
+    fontWeight: 600
+    lineHeight: 1.1
+    letterSpacing: -0.02em
+  h2:
+    fontFamily: Public Sans
+    fontSize: 28px
+    fontWeight: 600
+    lineHeight: 1.25
+  body-md:
+    fontFamily: Public Sans
+    fontSize: 16px
+    fontWeight: 400
+    lineHeight: 1.6
+  label-md:
+    fontFamily: Public Sans
+    fontSize: 14px
+    fontWeight: 600
+    lineHeight: 1.4
+  label-caps:
+    fontFamily: Space Grotesk
+    fontSize: 12px
+    fontWeight: 500
+    lineHeight: 1
+    letterSpacing: 0.1em
+rounded:
+  sm: 4px
+  md: 8px
+  full: 9999px
+spacing:
+  xs: 4px
+  sm: 8px
+  md: 16px
+  lg: 32px
+  xl: 64px
+  gutter: 24px
+components:
+  button-primary:
+    backgroundColor: "{colors.tertiary}"
+    textColor: "{colors.on-tertiary}"
+    typography: "{typography.label-md}"
+    rounded: "{rounded.sm}"
+    padding: 12px
+  button-primary-hover:
+    backgroundColor: "{colors.tertiary-container}"
+    textColor: "{colors.on-tertiary}"
+  button-secondary:
+    backgroundColor: "{colors.neutral}"
+    textColor: "{colors.primary}"
+    typography: "{typography.label-md}"
+    rounded: "{rounded.sm}"
+    padding: 12px
+  card:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.on-surface}"
+    rounded: "{rounded.md}"
+    padding: 24px
+  card-caption:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.secondary}"
+    typography: "{typography.label-caps}"
+  input:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.on-surface}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.sm}"
+    padding: 12px
+    height: 44px
+  input-error:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.error}"
 ---`,
               },
             ],
           },
           {
-            label: "Overview + Colors",
-            body: "The Heritage Overview section explains the system's purpose and principles. The Colors section uses token references throughout rather than repeating hex values.",
+            label: "Overview → Typography",
+            body: "The first three sections set the intent. The prose names each color and type level in human terms and says when to use it; the values stay in the tokens above.",
             codeBlocks: [
               {
                 lang: "markdown",
-                label: "Overview & Colors sections",
+                label: "Overview, Colors, Typography",
                 content: `## Overview
 
-Heritage is a design system for Heritage Financial — a wealth management
-platform serving high-net-worth individuals and their advisors.
-
-**Design Principles**
-
-- **Warmth** — Warm neutral palette. Avoid pure black; use
-  {color.primary} on light surfaces.
-- **Craftsmanship** — Deliberate spacing and refined typography.
-  Georgia for headings signals tradition and authority.
-- **Clarity** — Every action must be immediately legible.
-
----
+Architectural Minimalism meets Journalistic Gravitas. The UI evokes a
+premium matte finish — a high-end broadsheet or contemporary gallery.
+It should feel calm, dense with meaning, and never decorative.
 
 ## Colors
 
-The Heritage palette draws from warm earth tones to convey trust
-and permanence.
+The palette is rooted in high-contrast neutrals and a single accent color.
 
-Use {color.primary} for primary actions, active navigation states,
-and links. It is a deep warm brown with sufficient contrast against
-{color.background} (contrast ratio: 7.2:1).
+- **Primary (#1A1C1E):** Deep ink for headlines and core text.
+- **Secondary (#6C7278):** Sophisticated slate for borders, captions, metadata.
+- **Tertiary (#B8422E):** "Boston Clay" — the sole driver for interaction.
+- **Neutral (#F7F5F2):** Warm limestone foundation, softer than pure white.
+- **Error (#B3261E):** Reserved for error states. Never used for warnings.
 
-Use {color.secondary} for secondary buttons, placeholder text,
-and supporting UI text.
+## Typography
 
-**Rules**
+Two weights of **Public Sans** carry the narrative; **Space Grotesk**
+is reserved for technical data.
 
-- All body text must use {color.text.primary} or {color.text.muted}.
-  Never use base palette tokens (e.g., {color.brand-dark}) directly
-  in component code — always use semantic tokens.
-- Error states exclusively use {color.error}.
-  Never repurpose {color.error} for warnings.
-- {color.background} is the page background only. Component surfaces
-  use {color.surface}.`,
+- **Headlines:** Public Sans Semi-Bold. One h1 per page.
+- **Body:** Public Sans Regular at 16px — never smaller for prose.
+- **Labels:** Space Grotesk, uppercase, generous letter spacing, for
+  timestamps and metadata only.`,
               },
             ],
           },
           {
-            label: "Typography + Layout",
-            body: "Typography maps each token to its intended HTML element and context. Layout documents the spacing scale and grid structure.",
+            label: "Layout → Shapes",
+            body: "Three short structural sections. Heritage is a flat design, so Elevation & Depth explains what replaces shadows.",
             codeBlocks: [
               {
                 lang: "markdown",
-                label: "Typography & Layout sections",
-                content: `## Typography
+                label: "Layout, Elevation & Depth, Shapes",
+                content: `## Layout
 
-Heritage uses Georgia for display and heading text and Inter for all
-UI, body, and label text.
+A fixed max-width grid (1200px) on desktop, fluid on mobile. Spacing
+follows a strict 8px scale with a 4px half-step for micro-adjustments.
+Related items sit in cards with 24px internal padding.
 
-**Style mapping**
+## Elevation & Depth
 
-| Token | Use |
-|-------|-----|
-| {typography.display-lg} | Page hero titles (h1) — one per page |
-| {typography.heading-lg} | Section headings (h2), modal titles |
-| {typography.heading-md} | Card headings (h3), sidebar titles |
-| {typography.body-lg} | Long-form article text |
-| {typography.body-md} | Descriptions, form helper text |
-| {typography.label-md} | Button labels, nav items, table headers |
-| {typography.label-sm} | Timestamps, badges, captions |
+Depth comes from tonal layers, not shadows: white cards on the warm
+limestone background. No drop shadows.
 
-**Rules**
+## Shapes
 
-- Georgia is for headings only. Buttons, labels, and navigation
-  use Inter via {typography.label-md}.
-- Minimum body text: {typography.body-md} (16px). Never go smaller
-  for prose content.
-- Do not override line-height on individual elements.
-
----
-
-## Layout & Spacing
-
-The Heritage grid is 12 columns with a 24px gutter and 40px outer
-margins on desktop. Mobile: 4 columns, 16px gutter, 16px margins.
-
-**Spacing scale** — 4px base unit. All spacing is a multiple of 4.
-
-| Token | Value | Use |
-|-------|-------|-----|
-| {dimension.spacing.xs} | 4px | Icon gap, tight inline spacing |
-| {dimension.spacing.sm} | 8px | Badge padding, list item gap |
-| {dimension.spacing.md} | 16px | Default component padding |
-| {dimension.spacing.lg} | 24px | Card padding, section gap |
-| {dimension.spacing.xl} | 32px | Section separation |
-| {dimension.spacing.2xl} | 48px | Page section separation |
-
-**Rules**
-
-- Never use spacing values between scale steps (e.g., 12px, 20px).
-- Stack two xs tokens (4px + 4px) before reaching for sm (8px) — that
-  means you need sm, not an arbitrary value.`,
+Architectural sharpness. Interactive elements use a 4px corner radius;
+cards use 8px. Never mix rounded and sharp corners in one view.`,
               },
             ],
           },
           {
-            label: "Components",
-            body: "The Heritage component section documents each component by linking to its Storybook story — the authoritative, interactive reference — then binding its tokens and stating its rules. This is the section AI uses when generating component code.",
+            label: "Components + Do's",
+            body: "Each component entry says what the component is for, links to its Storybook story, names the token entries that hold its values, and states the rules tokens cannot express. The file ends with its guardrails.",
             codeBlocks: [
               {
                 lang: "markdown",
-                label: "Components section",
+                label: "Components, Do's and Don'ts",
                 content: `## Components
 
-Each component links to its Storybook story — the live reference for every
-variant and state. The entry below is the map: what the component is, where
-its story lives, the tokens it binds, and the rules to follow.
+Each component links to its Storybook story — the live reference for
+every variant and state. Its token values live in the front matter
+under the matching key.
 
 ### Button
 
-Buttons initiate actions. Three variants: primary (main action),
-secondary (supporting action), ghost (tertiary in dense contexts).
+Buttons initiate actions. Primary is the single most important action
+in a view; secondary supports it.
 
-| | |
-|---|---|
-| **Storybook** | https://storybook.heritage.design/?path=/docs/button--docs |
-| **Default story** | https://storybook.heritage.design/?path=/story/button--default |
-| **Figma** | \`Button / Primary\` |
-
-**Token bindings**
-
-| Property | Primary | Secondary | Ghost |
-|----------|---------|-----------|-------|
-| backgroundColor | {color.primary} | transparent | transparent |
-| textColor | {color.surface} | {color.primary} | {color.text.muted} |
-| border | none | {dimension.border.thick} solid {color.primary} | none |
-| padding | {dimension.spacing.md} {dimension.spacing.lg} | same | same |
-| borderRadius | {dimension.radius.md} | same | same |
-| typography | {typography.label-md} | same | same |
-
-**Rules**
-- One primary button per view. Never two primary buttons adjacent.
-- Disabled: opacity 0.4, pointer-events none. No alternative color.
-- Minimum tap target: 44×44px on all touch surfaces.
-
----
+- **Storybook:** https://storybook.example.com/?path=/docs/button--docs
+- **Tokens:** button-primary, button-primary-hover, button-secondary
+- Disabled: 40% opacity, no pointer events. No alternative color.
+- Minimum tap target: 44×44px on touch surfaces.
 
 ### Card
 
-A card groups related content on a surface with optional elevation.
+A card groups related content on a white surface.
 
-| | |
-|---|---|
-| **Storybook** | https://storybook.heritage.design/?path=/docs/card--docs |
-| **Default story** | https://storybook.heritage.design/?path=/story/card--default |
-| **Figma** | \`Card / Default\` |
-
-| Property | Token |
-|----------|-------|
-| backgroundColor | {color.surface} |
-| borderRadius | {dimension.radius.lg} |
-| padding | {dimension.spacing.lg} |
-| border | {dimension.border.thin} solid rgba(0,0,0,0.08) |
-
----
+- **Storybook:** https://storybook.example.com/?path=/docs/card--docs
+- **Tokens:** card, card-caption
 
 ### Input
 
 Text inputs for forms. Always pair with a visible label.
 
-| | |
-|---|---|
-| **Storybook** | https://storybook.heritage.design/?path=/docs/input--docs |
-| **Default story** | https://storybook.heritage.design/?path=/story/input--default |
-| **Figma** | \`Input / Default\` |
+- **Storybook:** https://storybook.example.com/?path=/docs/input--docs
+- **Tokens:** input, input-error
 
-| Property | Token |
-|----------|-------|
-| backgroundColor | {color.surface} |
-| borderColor | {color.secondary} |
-| borderRadius | {dimension.radius.sm} |
-| typography | {typography.body-md} |
-| focusBorderColor | {color.primary} |
-| errorBorderColor | {color.error} |`,
+## Do's and Don'ts
+
+- Do use Boston Clay only for the single most important action per screen
+- Don't place two primary buttons next to each other
+- Do maintain WCAG AA contrast ratios (4.5:1 for normal text)
+- Don't use Space Grotesk for buttons, body text, or headings`,
               },
             ],
+            note: "The storybook.example.com links are placeholders for the fictional Heritage system. In your own file, use the real story URLs from the workshop Storybook.",
           },
         ],
       },
@@ -4388,7 +4278,7 @@ Text inputs for forms. Always pair with a visible label.
             body: "Stitch is Google's AI design tool built around the design.md format. When you create or import a design.md, Stitch uses it to generate UI components that correctly reference your tokens and follow your system's documented rules.",
             bullets: [
               "Stitch reads your design.md at project creation and surfaces your token palette in the design editor",
-              "When generating components, Stitch pulls token names from design.md — you see '{color.primary}' in outputs, not raw hex values",
+              "When generating components, Stitch pulls token names from design.md — you see '{colors.primary}' in outputs, not raw hex values",
               "The Do's and Don'ts section directly influences what Stitch will and won't generate",
               "Stitch can export your Figma design system as a design.md file using the Stitch Figma plugin",
               "Changes to design.md sync back to Stitch's token panel without manual re-import",
@@ -4428,10 +4318,10 @@ before writing any code.
               "1. You update design.md with a new token or component rule",
               "2. Claude Code reads CLAUDE.md at session start — which points to design.md",
               "3. You prompt: 'Add a new Badge component with the success variant'",
-              "4. Claude Code generates Badge using {color.success} from design.md — no guessing",
-              "5. You run 'design-md lint design.md' to confirm references are valid",
-              "6. You run 'design-md export design.md --format css' to regenerate tokens.css",
-              "7. Commit design.md, the generated tokens.css, and the new Badge component together",
+              "4. Claude Code generates Badge using {colors.success} from design.md — no guessing",
+              "5. You run 'npx @google/design.md lint design.md' to confirm references are valid",
+              "6. You run 'npx @google/design.md export --format css-tailwind design.md > theme.css' to regenerate your token file",
+              "7. Commit design.md, the regenerated token file, and the new Badge component together",
             ],
             note: "The key insight: design.md makes AI output predictable. The same prompt produces the same tokens every time because the source of truth is explicit.",
           },
@@ -4452,20 +4342,28 @@ before writing any code.
       },
     ],
     exercise: {
-      title: "Write a Valid design.md for Your Project",
-      description: "Create a design.md file following the official spec structure — YAML front matter with token definitions and markdown body with the canonical sections. Use the Heritage example as a reference and the CLI to validate your file.",
+      title: "Write a Valid design.md from the Workshop Storybook",
+      description: "Create a design.md that documents the workshop design system — the Storybook we already built for this exercise. You do not need the components from your previous modules. Follow the official spec structure — YAML front matter with token definitions and a markdown body with the canonical sections in order — using the Heritage example as a reference and the CLI to validate your file.",
       steps: [
-        "Install the CLI: npm install -g @google/design.md",
-        "Create design.md in your project root with the required YAML front matter fields: title, description, version, and at least a color and typography tokens block",
-        "Write the five required sections: Overview, Colors, Typography, Layout & Spacing, and Components — each component entry linking to its Storybook story, then its token bindings and rules",
-        "Use token references ({color.primary}) in your markdown body instead of hardcoded hex values",
-        "Run 'design-md lint design.md' and fix any errors before committing",
+        "Install the design.md CLI from your project root: npm install @google/design.md — then verify it with 'npx @google/design.md spec' (Windows: npx -p @google/design.md designmd spec)",
+        "Open the workshop Storybook at https://workshop-roan-eta.vercel.app/ and browse the Foundations pages and a few Design System components to get to know the system",
+        "Create design.md in your project root with YAML front matter: a name, plus colors, typography, spacing, and rounded tokens taken from the Storybook's Foundations pages (Colors & Shadows, Typography, Spacing)",
+        "Write the sections in canonical order — at minimum Overview, Colors, Typography, Layout, and Components — with each component entry linking to its story in the workshop Storybook (for example /?path=/docs/design-system-button--docs) and stating its rules",
+        "Document at least five components from the workshop Storybook, starting with Button, Card, and Input — each gets a components token entry in the front matter and a prose entry in the Components section",
+        "Use token references ({colors.primary}) in your components tokens instead of repeating hex values",
+        "Run 'npx @google/design.md lint design.md', fix every error, and read each warning — orphaned-tokens warnings for colors you have not used in a component yet are expected",
         "Update your CLAUDE.md to reference design.md with 'read and follow design.md before writing any code'",
       ],
+      resource: {
+        kind: "link",
+        label: "Open the workshop Storybook",
+        href: "https://workshop-roan-eta.vercel.app/",
+        note: "the design system your design.md documents — use this, not your own components",
+      },
     },
     deliverable: {
       title: "A Linted design.md Committed to Your Repository",
-      description: "A committed design.md that passes 'design-md lint' with zero errors, contains all five required sections, and uses token references throughout the markdown body. Test it by starting a fresh Claude Code session and asking it to build a new component — it should correctly reference your tokens without prompting.",
+      description: "A committed design.md that documents the workshop design system, passes 'npx @google/design.md lint design.md' with zero errors, has its sections in canonical order, links each documented component to its story in the workshop Storybook, and uses token references in its component tokens. Test it by starting a fresh Claude Code session and asking it to build a new component — it should correctly reference your tokens without prompting.",
     },
     quiz: [
       {
@@ -4545,7 +4443,7 @@ before writing any code.
 ## Claude Code Specific
 
 Use plan mode for changes under \`src/billing/\`.
-Always run design-md lint before committing token changes.`,
+Always run npx @google/design.md lint design.md before committing token changes.`,
               },
             ],
           },
