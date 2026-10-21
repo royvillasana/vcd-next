@@ -223,6 +223,15 @@ html {
   color: #FAF3E7;
 }
 
+/* Visible keyboard focus — a solid, high-contrast ring on every focusable element */
+:focus-visible {
+  outline: 3px solid #2545D3;
+  outline-offset: 3px;
+}
+.dark :focus-visible {
+  outline-color: #FFC933;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
