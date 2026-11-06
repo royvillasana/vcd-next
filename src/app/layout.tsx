@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Space_Mono, Caveat } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ReviewModeBanner } from "@/components/review-mode-banner";
+import { MovedBanner } from "@/components/moved-banner";
 import "./globals.css";
 
 const bricolage = Bricolage_Grotesque({
@@ -37,6 +38,7 @@ export default function RootLayout({
       className={`${bricolage.variable} ${spaceMono.variable} ${caveat.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <MovedBanner />
         <TooltipProvider>{children}</TooltipProvider>
         <ReviewModeBanner />
       </body>
