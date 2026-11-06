@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiteNav } from "@/components/site-nav";
+import { RestoreBanner } from "@/components/restore-banner";
 
 /* ─── Phase data ─── */
 const phases = [
@@ -127,6 +128,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       {/* ─── 1. SiteNav ─── */}
       <SiteNav />
+      <RestoreBanner />
 
       {/* ─── 2. Hero Section ─── */}
       <section className="max-w-[1240px] mx-auto px-7 pt-[72px] pb-10 w-full">
